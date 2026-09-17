@@ -12,6 +12,9 @@
 
 *Pick your heaps, pick your rules, and try to beat an opponent that never loses a won position.*
 
+<sub>An optional (extra-credit) assignment for the <b>Algorithmic Game Theory</b> course<br>
+Computer Engineering BSc · Faculty of Electrical Engineering and Informatics (VIK) · Budapest University of Technology and Economics (BME)</sub>
+
 </div>
 
 ---
@@ -52,6 +55,11 @@ it computes the **Grundy number** of the current position and, whenever a winnin
 A built-in **tutor mode** shows the Grundy numbers in binary, their XOR, and the type of every position, so the
 program doubles as an interactive illustration of the Sprague–Grundy theory.
 
+> **About this project.** It was written as an optional, extra-credit assignment (Hungarian: *szorgalmi feladat*)
+> for the **Algorithmic Game Theory** course of the Computer Engineering BSc programme at the Faculty of Electrical
+> Engineering and Informatics (VIK) of the **Budapest University of Technology and Economics (BME)**. The Grundy
+> numbering definition it implements is taken from the course material.
+>
 > The user interface is in **Hungarian**; the source code identifiers, this document, and the mathematics are
 > language-independent.
 
@@ -392,7 +400,8 @@ This project is released under the [MIT License](LICENSE).
 
 ## Acknowledgements
 
-- The Grundy numbering definition (Definition 1.19) follows the combinatorial game theory lecture notes of the
-  Budapest University of Technology and Economics (BME).
+- This project is an optional assignment for the *Algorithmic Game Theory* course (Computer Engineering BSc,
+  BME VIK). The Grundy numbering definition (Definition 1.19) follows the course's lecture notes; the BME logo
+  and colours are used with reference to the university.
 - R. P. Sprague (1935) and P. M. Grundy (1939) independently discovered the theorem that bears their names;
   C. L. Bouton (1901) gave the first complete analysis of Nim.
