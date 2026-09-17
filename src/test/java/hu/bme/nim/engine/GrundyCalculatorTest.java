@@ -97,7 +97,15 @@ class GrundyCalculatorTest {
     void positionTypeFollowsGrundy() {
         GrundyCalculator calc = new GrundyCalculator(Rules.standard());
         assertEquals(PositionType.II, calc.type(GameState.of(Rules.standard(), Player.HUMAN, 8, 4, 12)));
-        assertEquals(PositionType.I, calc.type(GameState.of(Rules.standard(), Player.HUMAN, 8, 5, 1)));
+        // 1–3 szabály: g = (8 mod 4) ^ (5 mod 4) ^ (1 mod 4) = 0 ^ 1 ^ 1 = 0  →  T = II
+        GameState s851 = GameState.of(Rules.standard(), Player.HUMAN, 8, 5, 1);
+        assertEquals(0, calc.grundy(s851));
+        assertEquals(PositionType.II, calc.type(s851));
+        // Klasszikus Nim: ugyanez a felállás g = 8 ^ 5 ^ 1 = 12  →  T = I
+        GrundyCalculator classic = new GrundyCalculator(Rules.classicNim());
+        GameState c851 = GameState.of(Rules.classicNim(), Player.HUMAN, 8, 5, 1);
+        assertEquals(12, classic.grundy(c851));
+        assertEquals(PositionType.I, classic.type(c851));
         assertEquals(PositionType.II, PositionType.ofGrundy(0));
         assertEquals(PositionType.I, PositionType.ofGrundy(3));
         // egy kupac: T(J)=I ⇔ n nem osztható 4-gyel

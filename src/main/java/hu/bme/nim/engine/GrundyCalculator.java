@@ -1,12 +1,12 @@
 package hu.bme.nim.engine;
 
-import hu.bme.nim.model.GameState;
-import hu.bme.nim.model.Rules;
-
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 import java.util.Objects;
+
+import hu.bme.nim.model.GameState;
+import hu.bme.nim.model.Rules;
 
 /**
  * Grundy-számozás a 1.19. definíció szerint:
@@ -81,6 +81,8 @@ public final class GrundyCalculator {
         int xor = 0;
         for (int h : state.heaps()) {
             xor ^= grundy(h);
+            // !! Valahol itt a hiba !!
+            // xor ^= h;
         }
         return xor;
     }

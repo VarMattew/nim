@@ -249,8 +249,22 @@ Every class and public member carries Javadoc (in Hungarian, matching the UI), a
 with `-Xdoclint:all`, so the documentation can be generated without warnings:
 
 ```bash
-mvn javadoc:javadoc        # → target/site/apidocs/index.html
+mvn javadoc:javadoc        # → target/reports/apidocs/index.html
 ```
+
+### Build a Windows release
+
+The `release` Maven profile bundles the application, the JavaFX runtime and a trimmed (jlink-ed) Java runtime
+into a native Windows application with `jpackage`, so end users need **no Java installation**:
+
+```bash
+mvn clean package -P release                       # portable folder: target/dist/NIM/NIM.exe
+mvn clean package -P release -Djpackage.type=msi   # installer:       target/dist/NIM-1.0.0.msi  (needs WiX Toolset 3.x)
+```
+
+If `packaging/windows/nim.ico` exists it becomes the application icon. Zip the `target/dist/NIM` folder (or take
+the `.msi`) and attach it to a GitHub release. The same profile works on macOS (`-Djpackage.type=dmg`) and Linux
+(`-Djpackage.type=deb`) when run on that operating system — jpackage cannot cross-compile.
 
 ## Usage
 
@@ -371,9 +385,10 @@ mvn test
 
 ```
 nim/
-├── pom.xml
+├── pom.xml                      # build, javadoc, release (jpackage) profile
 ├── README.md
 ├── LICENSE
+├── packaging/windows/           # nim.ico for the Windows build
 └── src/
     ├── main/
     │   ├── java/hu/bme/nim/
@@ -394,7 +409,7 @@ nim/
 
 ## Roadmap
 
-- [ ] Native installers with `jpackage` (Windows `.msi`, macOS `.dmg`, Linux `.deb`)
+- [x] Native Windows build with `jpackage` (portable folder and `.msi` installer); macOS `.dmg` / Linux `.deb` via the same profile
 - [ ] Misère variant (the player who takes the last stone **loses**)
 - [ ] Move animations and optional sound
 - [ ] English UI language option

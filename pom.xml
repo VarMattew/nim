@@ -6,11 +6,19 @@
 
     <groupId>hu.bme</groupId>
     <artifactId>nim</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>NIM – Grundy AI</name>
     <description>NIM játék Grundy-számok (Sprague–Grundy) alapján döntő AI ellenféllel, JavaFX felülettel.</description>
+    <url>https://github.com/VarMattew/nim</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
@@ -18,6 +26,19 @@
         <javafx.version>21.0.6</javafx.version>
         <junit.version>5.11.4</junit.version>
         <main.class>hu.bme.nim.App</main.class>
+
+        <!-- jpackage beállítások (release profil) -->
+        <app.name>NIM</app.name>
+        <app.vendor>BME VIK</app.vendor>
+        <app.description>NIM játék Grundy-számos gépi ellenféllel</app.description>
+        <!-- MSI-hez szigorúan X.Y.Z alakú kell, SNAPSHOT nélkül -->
+        <app.version>${project.version}</app.version>
+        <!-- app-image: telepítő nélküli, hordozható mappa (nem kell WiX); msi/exe: telepítő (WiX Toolset 3.x kell) -->
+        <jpackage.type>app-image</jpackage.type>
+        <jpackage.modules>java.base,java.desktop,java.logging,java.xml,java.scripting,java.naming,java.prefs,java.datatransfer,jdk.unsupported</jpackage.modules>
+        <!-- ezeket a lenti, automatikusan aktiválódó profilok töltik ki -->
+        <jpackage.icon.args></jpackage.icon.args>
+        <jpackage.installer.args></jpackage.installer.args>
     </properties>
 
     <dependencies>
@@ -52,7 +73,21 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
             </plugin>
-            <!-- API-dokumentáció: mvn javadoc:javadoc  →  target/site/apidocs/index.html -->
+            <!-- Futtatható jar manifesttel; a launcher (App) nem Application-leszármazott, így classpath-ról is indul -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- API-dokumentáció: mvn javadoc:javadoc  →  target/reports/apidocs/index.html -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -73,7 +108,7 @@
                     </links>
                 </configuration>
             </plugin>
-            <!-- Futtatás: mvn javafx:run -->
+            <!-- Futtatás fejlesztés közben: mvn javafx:run -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -84,4 +119,105 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            Windows release:  mvn clean package -P release
+              → target/dist/NIM/NIM.exe            (hordozható mappa, beágyazott Java-futtatókörnyezettel)
+            Telepítő (WiX Toolset 3.x szükséges):  mvn clean package -P release -Djpackage.type=msi
+              → target/dist/NIM-1.0.0.msi
+            Ikon: ha létezik packaging/windows/nim.ico, automatikusan bekerül.
+        -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- 1) minden futásidejű függőség (JavaFX + natív Windows DLL-ek) egy mappába -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.8.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-runtime-deps</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                                    <includeScope>runtime</includeScope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- 2) az alkalmazás jar-ja is a libs mappába -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>3.4.2</version>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                        </configuration>
+                    </plugin>
+                    <!-- 3) jpackage a JDK-ból: natív Windows alkalmazás beágyazott, jlink-elt futtatókörnyezettel -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>jpackage</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${java.home}/bin/jpackage</executable>
+                                    <commandlineArgs>--type ${jpackage.type} --name "${app.name}" --app-version ${app.version} --vendor "${app.vendor}" --description "${app.description}" --input "${project.build.directory}/libs" --main-jar ${project.build.finalName}.jar --main-class ${main.class} --add-modules ${jpackage.modules} --dest "${project.build.directory}/dist" --java-options -Dfile.encoding=UTF-8 ${jpackage.icon.args} ${jpackage.installer.args}</commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Ikon csak akkor, ha a fájl létezik (packaging/windows/nim.ico) -->
+        <profile>
+            <id>release-icon</id>
+            <activation>
+                <file>
+                    <exists>${basedir}/packaging/windows/nim.ico</exists>
+                </file>
+            </activation>
+            <properties>
+                <jpackage.icon.args>--icon "${project.basedir}/packaging/windows/nim.ico"</jpackage.icon.args>
+            </properties>
+        </profile>
+        <!-- Telepítő-specifikus kapcsolók csak MSI/EXE típusnál (app-image-nél a jpackage elutasítaná őket) -->
+        <profile>
+            <id>release-msi</id>
+            <activation>
+                <property>
+                    <name>jpackage.type</name>
+                    <value>msi</value>
+                </property>
+            </activation>
+            <properties>
+                <jpackage.installer.args>--win-menu --win-menu-group BME --win-shortcut --win-dir-chooser --win-per-user-install</jpackage.installer.args>
+            </properties>
+        </profile>
+        <profile>
+            <id>release-exe</id>
+            <activation>
+                <property>
+                    <name>jpackage.type</name>
+                    <value>exe</value>
+                </property>
+            </activation>
+            <properties>
+                <jpackage.installer.args>--win-menu --win-menu-group BME --win-shortcut --win-dir-chooser --win-per-user-install</jpackage.installer.args>
+            </properties>
+        </profile>
+    </profiles>
 </project>
