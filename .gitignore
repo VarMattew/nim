@@ -1,17 +1,90 @@
+# ---- Maven build ----
 target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.flattened-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# Maven wrapper jar-t nem verziózzuk, a wrapper scriptjeit igen
+.mvn/wrapper/maven-wrapper.jar
+
+# ---- Java / JVM ----
 *.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
 *.log
 
-# IDE
+# ---- jpackage / jlink kimenet ----
+dist/
+installer/
+*.msi
+*.exe
+*.dmg
+*.deb
+*.rpm
+
+# ---- IDE: IntelliJ IDEA ----
 .idea/
 *.iml
-.vscode/
+*.ipr
+*.iws
+out/
+
+# ---- IDE: Eclipse / STS ----
 .settings/
 .project
 .classpath
-nbproject/
+.factorypath
+.apt_generated/
+.springBeans
+.sts4-cache/
+bin/
+
+# ---- IDE: NetBeans ----
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
 nb-configuration.xml
 
-# OS
+# ---- IDE: VS Code ----
+.vscode/
+*.code-workspace
+
+# ---- Szerkesztők ----
+*~
+*.swp
+*.swo
+*.bak
+*.orig
+*.tmp
+~$*
+
+# ---- Operációs rendszerek ----
+# Windows
 Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+# Linux
+.directory
+.Trash-*
+
+# ---- Környezeti / helyi beállítások ----
+.env
+.env.local
+*.local.properties
