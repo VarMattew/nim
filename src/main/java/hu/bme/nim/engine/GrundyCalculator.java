@@ -72,17 +72,40 @@ public final class GrundyCalculator {
         return result;
     }
 
+    /** Az állás típusa: T(v) = II, ha g(v) = 0 (a 2. játékos nyer); T(v) = I, ha g(v) > 0. */
+    public PositionType type(GameState state) {
+        return PositionType.ofGrundy(grundy(state));
+    }
+
     /**
-     * P-állás (a soron következő játékos veszít optimális játék mellett) ⇔ Grundy-szám 0.
+     * T(v) = II: a soron következő játékos veszít optimális játék mellett ⇔ Grundy-szám 0.
      * A definíció szerint P = { p : g(p) = 0 }, N = { p : g(p) > 0 }.
      */
     public boolean isPPosition(GameState state) {
         return grundy(state) == 0;
     }
 
-    /** N-állás: a soron következő játékosnak van nyerő stratégiája. */
+    /** T(v) = I: a soron következő játékosnak van nyerő stratégiája. */
     public boolean isNPosition(GameState state) {
         return !isPPosition(state);
+    }
+
+    /**
+     * Bináris kiíráshoz szükséges jegyszám: a legnagyobb kupacméret bináris hossza
+     * (pl. 8 → 4 jegy, 7 → 3 jegy). Legalább 1.
+     */
+    public static int binaryWidth(GameState state) {
+        int max = 0;
+        for (int h : state.heaps()) {
+            max = Math.max(max, h);
+        }
+        return Math.max(1, Integer.toBinaryString(max).length());
+    }
+
+    /** Fix szélességű bináris alak, balról nullákkal kitöltve (pl. 5, 4 → "0101"). */
+    public static String toBinary(int value, int width) {
+        String s = Integer.toBinaryString(value);
+        return "0".repeat(Math.max(0, width - s.length())) + s;
     }
 
     // ---- belső ----

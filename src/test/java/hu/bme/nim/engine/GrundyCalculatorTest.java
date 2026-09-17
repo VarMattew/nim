@@ -93,6 +93,36 @@ class GrundyCalculatorTest {
     }
 
     @Test
+    @DisplayName("Típus: T(v)=II ⇔ Grundy 0, T(v)=I ⇔ Grundy > 0")
+    void positionTypeFollowsGrundy() {
+        GrundyCalculator calc = new GrundyCalculator(Rules.standard());
+        assertEquals(PositionType.II, calc.type(GameState.of(Rules.standard(), Player.HUMAN, 8, 4, 12)));
+        assertEquals(PositionType.I, calc.type(GameState.of(Rules.standard(), Player.HUMAN, 8, 5, 1)));
+        assertEquals(PositionType.II, PositionType.ofGrundy(0));
+        assertEquals(PositionType.I, PositionType.ofGrundy(3));
+        // egy kupac: T(J)=I ⇔ n nem osztható 4-gyel
+        for (int n = 1; n <= 40; n++) {
+            assertEquals(n % 4 != 0 ? PositionType.I : PositionType.II,
+                    calc.type(GameState.of(Rules.standard(), Player.HUMAN, n)), "n=" + n);
+        }
+    }
+
+    @Test
+    @DisplayName("Bináris kiírás: szélesség a legnagyobb kupacméret hossza, balról nullákkal töltve")
+    void binaryWidthAndFormatting() {
+        GameState s = GameState.of(Rules.standard(), Player.HUMAN, 8, 5, 1);
+        assertEquals(4, GrundyCalculator.binaryWidth(s));
+        assertEquals("1000", GrundyCalculator.toBinary(8, 4));
+        assertEquals("0101", GrundyCalculator.toBinary(5, 4));
+        assertEquals("0001", GrundyCalculator.toBinary(1, 4));
+        assertEquals("0000", GrundyCalculator.toBinary(0, 4));
+        assertEquals(3, GrundyCalculator.binaryWidth(GameState.of(Rules.standard(), Player.HUMAN, 7, 5, 3)));
+        assertEquals(1, GrundyCalculator.binaryWidth(GameState.of(Rules.standard(), Player.HUMAN, 0, 0)));
+        // ha az érték hosszabb a szélességnél, nem vág le
+        assertEquals("1000", GrundyCalculator.toBinary(8, 2));
+    }
+
+    @Test
     @DisplayName("Eltérő szabályú állással hívva kivételt dob")
     void rulesMismatchThrows() {
         GrundyCalculator calc = new GrundyCalculator(Rules.standard());

@@ -1,12 +1,27 @@
 package hu.bme.nim;
 
+import hu.bme.nim.ui.NimApplication;
+
 /**
- * Belépési pont. A JavaFX felület a 2. ütemben kerül ide; addig egy rövid konzolos bemutató fut,
- * amely a Grundy-számítást szemlélteti.
+ * Belépési pont.
+ * <p>
+ * Szándékosan <b>nem</b> származik a JavaFX {@code Application} osztályból: így a program
+ * classpath-ról is indítható ("JavaFX runtime components are missing" hiba nélkül), és a
+ * {@code --console} kapcsolóval a grafikus felület helyett a konzolos bemutató fut.
+ * <pre>
+ *   mvn javafx:run                                   – grafikus felület
+ *   java -cp target/classes hu.bme.nim.App --console 3 8 5 1   – konzolos bemutató
+ * </pre>
  */
 public final class App {
 
     public static void main(String[] args) {
-        ConsoleDemo.run(args);
+        if (args.length > 0 && "--console".equals(args[0])) {
+            String[] rest = new String[args.length - 1];
+            System.arraycopy(args, 1, rest, 0, rest.length);
+            ConsoleDemo.run(rest);
+            return;
+        }
+        NimApplication.launchApp(args);
     }
 }

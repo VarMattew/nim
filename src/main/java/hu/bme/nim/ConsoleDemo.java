@@ -4,6 +4,7 @@ import hu.bme.nim.engine.AiPlayer;
 import hu.bme.nim.engine.Difficulty;
 import hu.bme.nim.engine.GrundyCalculator;
 import hu.bme.nim.engine.NimAnalyzer;
+import hu.bme.nim.engine.PositionType;
 import hu.bme.nim.model.Game;
 import hu.bme.nim.model.GameState;
 import hu.bme.nim.model.Move;
@@ -11,10 +12,14 @@ import hu.bme.nim.model.Player;
 import hu.bme.nim.model.Rules;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
- * Konzolos bemutató: az AI önmaga ellen játszik, minden lépésnél kiírva a kupaconkénti
- * Grundy-számokat binárisan és az XOR-t. Ellenőrzésre szolgál, amíg a JavaFX felület elkészül.
+ * Konzolos bemutató: az AI önmaga ellen játszik, minden lépésnél kiírva a kupacméreteket és a
+ * kupaconkénti Grundy-számokat binárisan, az XOR-t és az állás típusát T(v) ∈ {I, II}.
+ * <p>
+ * A bináris jegyszám a kezdőállás legnagyobb kupacméretéhez igazodik (8 → 4 jegy), és a játék
+ * végéig rögzített, így a számok oszlopba rendezve olvashatók.
  * <p>
  * Használat: {@code java ... hu.bme.nim.App [maxTake|0=korlátlan] [kupac1 kupac2 ...]}
  */
@@ -41,34 +46,36 @@ final class ConsoleDemo {
         NimAnalyzer analyzer = new NimAnalyzer(calc);
         AiPlayer ai = new AiPlayer(analyzer, Difficulty.HARD);
         Game game = new Game(GameState.of(rules, Player.HUMAN, heaps));
+        int width = GrundyCalculator.binaryWidth(game.initialState());
 
         System.out.println("Szabály: " + rules);
-        describe(calc, game.state());
+        System.out.println("Kezdőállás v0 = " + game.state().heaps()
+                + "  →  a játék típusa T(J) = " + calc.type(game.state()));
+        System.out.println();
+        describe(calc, game.state(), 0, width);
+        int step = 1;
         while (!game.isOver()) {
             Move move = ai.chooseMove(game.state());
             Player mover = game.state().currentPlayer();
             game.play(move);
             System.out.println(mover.displayName() + " lép: " + move);
-            describe(calc, game.state());
+            describe(calc, game.state(), step++, width);
         }
+        System.out.println();
         System.out.println("Győztes: " + game.winner().displayName());
     }
 
-    private static void describe(GrundyCalculator calc, GameState state) {
+    private static void describe(GrundyCalculator calc, GameState state, int index, int width) {
         List<Integer> g = calc.heapGrundies(state);
-        int width = Math.max(1, Integer.toBinaryString(g.stream().mapToInt(Integer::intValue).max().orElse(0)).length());
-        StringBuilder sb = new StringBuilder("  kupacok " + state.heaps() + "  Grundy:");
+        StringJoiner sizes = new StringJoiner(", ");
+        StringJoiner grundies = new StringJoiner(", ");
         for (int i = 0; i < g.size(); i++) {
-            sb.append(' ').append(bin(g.get(i), width));
+            sizes.add(GrundyCalculator.toBinary(state.heap(i), width));
+            grundies.add(GrundyCalculator.toBinary(g.get(i), width));
         }
         int x = calc.grundy(state);
-        sb.append("  XOR = ").append(bin(x, width)).append(" (").append(x).append(") → ")
-          .append(x == 0 ? "P-állás (soron következő veszít)" : "N-állás (soron következő nyer)");
-        System.out.println(sb);
-    }
-
-    private static String bin(int value, int width) {
-        String s = Integer.toBinaryString(value);
-        return "0".repeat(Math.max(0, width - s.length())) + s;
+        PositionType type = calc.type(state);
+        System.out.printf("  v%-2d %-14s kupacok: %s   Grundy: %s   XOR = %s (%d)   T(v%d) = %s%n",
+                index, state.heaps(), sizes, grundies, GrundyCalculator.toBinary(x, width), x, index, type);
     }
 }

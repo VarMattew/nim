@@ -1,0 +1,162 @@
+/* NIM – Grundy AI – felület stílus */
+
+.root {
+    -fx-font-family: "Segoe UI", "Noto Sans", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: #f4f6f9;
+    -nim-accent: #1f5fa8;
+    -nim-accent-light: #dce9f8;
+    -nim-pebble: #6b7c93;
+    -nim-pebble-dark: #3d4a5c;
+    -nim-win: #2e7d32;
+    -nim-lose: #c62828;
+}
+
+.title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -nim-accent;
+}
+
+.subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a5568;
+}
+
+.section {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+}
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #d9dee7;
+    -fx-border-radius: 10;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+}
+
+.button {
+    -fx-background-radius: 6;
+    -fx-padding: 6 14 6 14;
+}
+
+.button.primary {
+    -fx-background-color: -nim-accent;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 8 22 8 22;
+}
+
+.button.primary:hover {
+    -fx-background-color: derive(-nim-accent, 15%);
+}
+
+.button.take {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-min-width: 52;
+    -fx-background-color: -nim-accent-light;
+    -fx-border-color: -nim-accent;
+    -fx-border-radius: 6;
+    -fx-text-fill: -nim-accent;
+}
+
+.button.take:hover {
+    -fx-background-color: derive(-nim-accent-light, -8%);
+}
+
+/* --- kupacok --- */
+
+.heap {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-color: #cbd2dc;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+    -fx-alignment: top-center;
+    -fx-spacing: 6;
+    -fx-cursor: hand;
+}
+
+.heap:hover {
+    -fx-border-color: derive(-nim-accent, 40%);
+}
+
+.heap.selected {
+    -fx-border-color: -nim-accent;
+    -fx-background-color: -nim-accent-light;
+}
+
+.heap.disabled {
+    -fx-opacity: 0.7;
+    -fx-cursor: default;
+}
+
+.heap.empty {
+    -fx-border-style: dashed;
+}
+
+.heap-title {
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+}
+
+.heap-count {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -nim-accent;
+}
+
+.pebble {
+    -fx-fill: linear-gradient(from 20% 20% to 80% 80%, derive(-nim-pebble, 35%), -nim-pebble-dark);
+    -fx-stroke: -nim-pebble-dark;
+    -fx-stroke-width: 1;
+}
+
+.pebble.marked {
+    -fx-fill: linear-gradient(from 20% 20% to 80% 80%, #ffb74d, #e65100);
+    -fx-stroke: #bf360c;
+}
+
+.pebble.removed {
+    -fx-fill: transparent;
+    -fx-stroke: #cbd2dc;
+    -fx-stroke-dash-array: 2 2;
+}
+
+/* --- állapot --- */
+
+.status {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d3748;
+}
+
+.status.human-turn { -fx-text-fill: -nim-accent; }
+.status.ai-turn { -fx-text-fill: #6b7c93; }
+.status.win { -fx-text-fill: -nim-win; }
+.status.lose { -fx-text-fill: -nim-lose; }
+
+/* --- oktató panel --- */
+
+.tutor {
+    -fx-font-family: "Consolas", "Cascadia Mono", "DejaVu Sans Mono", monospace;
+    -fx-font-size: 13px;
+}
+
+.tutor-type-I { -fx-text-fill: -nim-win; -fx-font-weight: bold; }
+.tutor-type-II { -fx-text-fill: -nim-lose; -fx-font-weight: bold; }
+
+.log {
+    -fx-font-size: 12px;
+}
+
+.hint {
+    -fx-text-fill: #6b7c93;
+    -fx-font-size: 12px;
+}

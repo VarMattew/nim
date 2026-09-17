@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="hu.bme.nim.ui.SetupController">
+    <padding>
+        <Insets top="18" right="24" bottom="18" left="24"/>
+    </padding>
+
+    <top>
+        <VBox spacing="4">
+            <Label styleClass="title" text="NIM – játék Grundy-számos ellenféllel"/>
+            <Label styleClass="subtitle"
+                   text="Állítsd be a kupacokat és a szabályokat, majd indítsd a játékot. Aki az utolsó kavicsot elveszi, nyer."/>
+            <Separator>
+                <padding>
+                    <Insets top="8" bottom="4"/>
+                </padding>
+            </Separator>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <HBox spacing="18">
+                <padding>
+                    <Insets top="8" right="4" bottom="8" left="4"/>
+                </padding>
+
+                <!-- Kupacok -->
+                <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                    <Label styleClass="section" text="Kupacok"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Kupacok száma:"/>
+                        <Spinner fx:id="heapCountSpinner" prefWidth="80" editable="true"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label text="Összes kavics:"/>
+                        <Label fx:id="totalLabel" styleClass="heap-count" text="0"/>
+                    </HBox>
+                    <Label styleClass="hint" text="Kupaconkénti kavicsszám (0–50):"/>
+                    <FlowPane fx:id="heapSizesPane" hgap="10" vgap="8"/>
+                    <Separator/>
+                    <Label styleClass="section" text="Véletlen kupacok"/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Méret:"/>
+                        <Spinner fx:id="randomMinSpinner" prefWidth="70" editable="true"/>
+                        <Label text="–"/>
+                        <Spinner fx:id="randomMaxSpinner" prefWidth="70" editable="true"/>
+                        <Button fx:id="randomButton" text="Véletlen méretek" onAction="#onRandomSizes"/>
+                        <Button text="Minden véletlen" onAction="#onRandomAll"/>
+                    </HBox>
+                    <Label fx:id="errorLabel" styleClass="hint" style="-fx-text-fill: #c62828;" text=""/>
+                </VBox>
+
+                <!-- Szabályok és ellenfél -->
+                <VBox spacing="12" styleClass="card" minWidth="330" prefWidth="360">
+                    <Label styleClass="section" text="Lépésszabály"/>
+                    <fx:define>
+                        <ToggleGroup fx:id="rulesGroup"/>
+                    </fx:define>
+                    <RadioButton fx:id="rulesStandard" text="1, 2 vagy 3 kavics vehető el" toggleGroup="$rulesGroup"
+                                 selected="true"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <RadioButton fx:id="rulesLimited" text="Egyéni felső korlát: 1 –" toggleGroup="$rulesGroup"/>
+                        <Spinner fx:id="maxTakeSpinner" prefWidth="70" editable="true"/>
+                        <Label text="kavics"/>
+                    </HBox>
+                    <RadioButton fx:id="rulesClassic" text="Korlátlan (klasszikus Nim)" toggleGroup="$rulesGroup"/>
+                    <Label fx:id="grundyHintLabel" styleClass="hint" wrapText="true"
+                           text="Kupaconkénti Grundy-szám: g(n) = n mod 4"/>
+
+                    <Separator/>
+                    <Label styleClass="section" text="Ellenfél"/>
+                    <GridPane hgap="10" vgap="10">
+                        <Label text="Nehézség:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="difficultyBox" prefWidth="180" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="Ki kezd:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <ComboBox fx:id="starterBox" prefWidth="180" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    </GridPane>
+                    <Label fx:id="difficultyHintLabel" styleClass="hint" wrapText="true" text=""/>
+
+                    <Separator/>
+                    <CheckBox fx:id="tutorCheck" text="Oktató mód: Grundy-számok, XOR és T(v) megjelenítése" selected="true"
+                              wrapText="true"/>
+                </VBox>
+            </HBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <padding>
+                <Insets top="12"/>
+            </padding>
+            <Label fx:id="typeLabel" styleClass="hint" text=""/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="startButton" styleClass="primary" text="Játék indítása" defaultButton="true"
+                    onAction="#onStart"/>
+        </HBox>
+    </bottom>
+</BorderPane>
