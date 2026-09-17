@@ -97,14 +97,15 @@ acyclic, every position has exactly one of these two types.
 
 > **Definition.** For a combinatorial game $(V,E)$ a function $g : V \to \mathbb{N}_0$ is a **Grundy numbering** if
 > for every $p \in V$
-> $$g(p) = \min\{\, n \in \mathbb{N}_0 : n \neq g(q)\ \text{for all}\ pq \in E \,\}.$$
 >
-> Abbreviated: $g(p) = \operatorname{mex}\{\, g(q) : pq \in E \,\}$, where **mex** (*minimal excludant*) is the
+> $$g(p) = \min \lbrace n \in \mathbb{N}_0 : n \neq g(q) \ \forall \ pq \in E \rbrace .$$
+>
+> Abbreviated: $g(p) = \mathrm{mex}\lbrace g(q) : pq \in E \rbrace$, where **mex** (*minimal excludant*) is the
 > smallest non-negative integer **not** in the set. The **Grundy number of the game** $(V, E, p_0)$ is $g(p_0)$.
 
 Two facts follow directly from the definition:
 
-1. Every terminal position has $g = \operatorname{mex}\varnothing = 0$.
+1. Every terminal position has $g = \mathrm{mex}\emptyset = 0$.
 2. If $g(p) = 0$, no move leads to a position with $g = 0$ (otherwise $0$ would not be excluded);
    if $g(p) > 0$, some move leads to a position with $g = 0$ (otherwise $0$ would be the mex).
 
@@ -125,7 +126,7 @@ For one heap of $n$ stones the moves are $n \to n - r$ for every permitted remov
 $g(n)$ **literally from the definition**, iteratively and with memoisation:
 
 $$
-g(0) = 0, \qquad g(n) = \operatorname{mex}\{\, g(n-r) : 1 \le r \le \min(n, k) \,\},
+g(0) = 0, \qquad g(n) = \mathrm{mex}\lbrace g(n-r) : 1 \le r \le \min(n, k) \rbrace,
 $$
 
 where $k$ is the maximum removal allowed by the rule set ($k = \infty$ for classic Nim). Two special cases are
@@ -133,7 +134,7 @@ well known, and the unit tests verify that the generic mex computation reproduce
 
 | Rule set | Grundy number of a heap of $n$ | Why |
 |---|---|---|
-| classic Nim (any number) | $g(n) = n$ | from $n$ every $0 \le m < n$ is reachable, so the mex of $\{0,\dots,n-1\}$ is $n$ |
+| classic Nim (any number) | $g(n) = n$ | from $n$ every $0 \le m < n$ is reachable, so the mex of $\lbrace 0,\dots,n-1 \rbrace$ is $n$ |
 | take $1..k$ | $g(n) = n \bmod (k+1)$ | the reachable values are the previous $k$ residues; the missing one is $n \bmod (k+1)$ |
 | take $1, 2, 3$ | $g(n) = n \bmod 4$ | the case $k = 3$ |
 
@@ -171,7 +172,7 @@ $$
 
 - **Classic Nim** ($g(n) = n$): reduce heap $i$ to $n_i \oplus X$; this is possible for any heap where
   $n_i \oplus X < n_i$, i.e. where $n_i$ has a 1 in the highest set bit of $X$.
-- **Limited removal** ($g(n) = n \bmod (k+1)$): remove $r = \bigl(g(n_i) - (X \oplus g(n_i))\bigr) \bmod (k+1)$
+- **Limited removal** ($g(n) = n \bmod (k+1)$): remove $r = (g(n_i) - (X \oplus g(n_i))) \bmod (k+1)$
   stones, provided $1 \le r \le n_i$.
 
 Rather than hard-coding these formulas, the engine simply scans every heap and every legal removal and keeps
@@ -181,14 +182,14 @@ rule set (`NimAnalyzer.winningMoves`).
 ### Why the raw heap sizes must not be XOR-ed
 
 For classic Nim the Grundy number equals the heap size, so XOR-ing the sizes is correct. For the 1-2-3 variant
-it is **not**: with heaps $\{4, 8\}$ the raw XOR is $4 \oplus 8 = 12 \neq 0$, which would wrongly suggest a winning
+it is **not**: with heaps $\lbrace 4, 8 \rbrace$ the raw XOR is $4 \oplus 8 = 12 \neq 0$, which would wrongly suggest a winning
 move, whereas the Grundy numbers are $4 \bmod 4 = 0$ and $8 \bmod 4 = 0$, giving $X = 0$ — a lost position for the
 player to move. The AI always XORs Grundy numbers, never sizes; the tutor panel shows both columns so the
 difference is visible.
 
 ### A worked example
 
-Classic Nim, heaps $\{3, 4, 5\}$, three-bit binary:
+Classic Nim, heaps $\lbrace 3, 4, 5 \rbrace$, three-bit binary:
 
 ```
 heap   size   g(size)
@@ -200,9 +201,9 @@ heap   size   g(size)
 ```
 
 The winning move must make the XOR zero: $X = 2$, and the only heap with $n_i \oplus 2 < n_i$ is heap 1
-($3 \oplus 2 = 1$). Remove **two stones from heap 1**, leaving $\{1, 4, 5\}$ with $1 \oplus 4 \oplus 5 = 0$.
+($3 \oplus 2 = 1$). Remove **two stones from heap 1**, leaving $\lbrace 1, 4, 5 \rbrace$ with $1 \oplus 4 \oplus 5 = 0$.
 Afterwards the opponent can only reach non-zero positions, and the winner keeps answering with a move back to
-zero — for example the mirror positions $\{0,4,4\} \to \{0,3,3\} \to \{0,2,2\} \to \{0,1,1\} \to \{0,0,0\}$.
+zero — for example the mirror positions $\lbrace 0,4,4 \rbrace \to \lbrace 0,3,3 \rbrace \to \lbrace 0,2,2 \rbrace \to \lbrace 0,1,1 \rbrace \to \lbrace 0,0,0 \rbrace$.
 
 ## How the AI plays
 
@@ -216,7 +217,7 @@ else:                                      # T(v) = II — every move loses agai
 ```
 
 Everything is deterministic and cheap: computing $g$ for a heap of $n$ stones is $O(n \cdot k)$ once (memoised),
-and choosing a move is $O(\text{heaps} \times k)$.
+and choosing a move is $O(\mathrm{heaps} \times k)$.
 
 ## Getting started
 
@@ -327,7 +328,7 @@ flowchart LR
 | | `Game` | a mutable match: current state, move history, `undo()`, `rematch()` |
 | | `HeapGenerator` | random initial heaps |
 | `engine` | `GrundyCalculator` | $g(n)$ by mex with memoisation; $g$ of a position by XOR; `type(state)`; binary formatting helpers |
-| | `PositionType` | the enum $\{\mathrm{I}, \mathrm{II}\}$ |
+| | `PositionType` | the enum $\lbrace \mathrm{I}, \mathrm{II} \rbrace$ |
 | | `NimAnalyzer` | all moves that lead to a Grundy-0 position |
 | | `AiPlayer`, `Difficulty` | move selection per difficulty level |
 | `ui` | `NimApplication` | single stage, swaps the setup and game views |
@@ -345,7 +346,7 @@ JUnit 5 tests cover the mathematics and the AI:
 
 - $g(n) = n \bmod 4$ for the 1-2-3 rules, $g(n) = n \bmod (k+1)$ for several $k$, $g(n) = n$ for classic Nim;
   memoisation is order-independent.
-- Multi-heap Grundy numbers equal the XOR of the components; $\{4, 8\}$ is of type II under 1-2-3 rules.
+- Multi-heap Grundy numbers equal the XOR of the components; $\lbrace 4, 8 \rbrace$ is of type II under 1-2-3 rules.
 - For all three-heap positions up to size 9 and several rule sets: from a type-II position no move reaches
   type II, from a type-I position some move does; `winningMoves` returns exactly the moves that reach Grundy 0.
 - *Medium* and *Hard* always move to Grundy 0 from a won position; every level always returns a legal move;
