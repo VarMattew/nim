@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Állás-elemzés a Grundy-számok alapján: megkeresi azokat a lépéseket, amelyek 0 Grundy-számú
- * ("mag", P-állás) állásba vezetnek. Ezek a nyerő lépések.
+ * ("mag", {@code T(v) = II}) állásba vezetnek. Ezek a nyerő lépések.
  * <p>
  * Ha az aktuális állás Grundy-száma {@code X ≠ 0}, a Sprague–Grundy tétel garantálja, hogy van
  * olyan kupac és elvétel, amely után az új XOR 0. Klasszikus Nimnél ez éppen az
@@ -20,17 +20,31 @@ public final class NimAnalyzer {
 
     private final GrundyCalculator calculator;
 
+    /**
+     * Elemző a megadott kalkulátorral.
+     *
+     * @param calculator a Grundy-kalkulátor, amelynek szabálya az elemzett állásokéval egyezik
+     * @throws NullPointerException ha {@code calculator == null}
+     */
     public NimAnalyzer(GrundyCalculator calculator) {
         this.calculator = Objects.requireNonNull(calculator, "calculator");
     }
 
+    /**
+     * A használt kalkulátor.
+     *
+     * @return a kalkulátor
+     */
     public GrundyCalculator calculator() {
         return calculator;
     }
 
     /**
      * Az összes olyan legális lépés, amely után az állás Grundy-száma 0.
-     * Üres lista, ha az aktuális állás már P-állás (nincs nyerő lépés).
+     *
+     * @param state az állás
+     * @return új lista a nyerő lépésekkel kupaconként növekvő elvétellel; üres, ha az állás már
+     *         {@code T(v) = II} (nincs nyerő lépés) vagy a játék véget ért
      */
     public List<Move> winningMoves(GameState state) {
         int x = calculator.grundy(state);
@@ -54,7 +68,12 @@ public final class NimAnalyzer {
         return result;
     }
 
-    /** Van-e nyerő lépése a soron következőnek (N-állás). */
+    /**
+     * Van-e nyerő lépése a soron következőnek ({@code T(v) = I}).
+     *
+     * @param state az állás
+     * @return {@code true}, ha a játék tart és a Grundy-szám nem 0
+     */
     public boolean hasWinningMove(GameState state) {
         return !state.isOver() && calculator.isNPosition(state);
     }

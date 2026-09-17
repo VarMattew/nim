@@ -23,6 +23,12 @@ final class Theme {
     private Theme() {
     }
 
+    /**
+     * A stíluslap URL-je.
+     *
+     * @return a {@code style.css} külső formájú URL-je
+     * @throws IllegalStateException ha a stíluslap nem található az erőforrások között
+     */
     static String stylesheet() {
         URL css = Theme.class.getResource(STYLESHEET);
         if (css == null) {
@@ -31,7 +37,11 @@ final class Theme {
         return css.toExternalForm();
     }
 
-    /** Az ablakikon (favicon); {@code null}, ha a kép hiányzik – ekkor a program ikon nélkül fut. */
+    /**
+     * Az ablakikon (favicon), első híváskor betöltve.
+     *
+     * @return az ikon, vagy {@code null}, ha a kép hiányzik – ekkor a program ikon nélkül fut
+     */
     static Image icon() {
         if (icon == null) {
             URL url = Theme.class.getResource(ICON);
@@ -42,12 +52,22 @@ final class Theme {
         return icon;
     }
 
+    /**
+     * Stíluslap hozzáadása a színtérhez (csak egyszer).
+     *
+     * @param scene a színtér
+     */
     static void apply(Scene scene) {
         if (!scene.getStylesheets().contains(stylesheet())) {
             scene.getStylesheets().add(stylesheet());
         }
     }
 
+    /**
+     * Ablakikon beállítása.
+     *
+     * @param stage az ablak
+     */
     static void apply(Stage stage) {
         Image img = icon();
         if (img != null && !img.isError()) {
@@ -55,7 +75,11 @@ final class Theme {
         }
     }
 
-    /** Stíluslap és ikon egy dialógusra (Alert stb.) – a megjelenítés előtt hívandó. */
+    /**
+     * Stíluslap és ikon egy dialógusra (Alert stb.) – a megjelenítés előtt hívandó.
+     *
+     * @param dialog a dialógus
+     */
     static void apply(Dialog<?> dialog) {
         dialog.getDialogPane().getStylesheets().add(stylesheet());
         Scene scene = dialog.getDialogPane().getScene();

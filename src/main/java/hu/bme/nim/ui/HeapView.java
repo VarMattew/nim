@@ -22,6 +22,11 @@ final class HeapView extends VBox {
     private final Label countLabel = new Label();
     private final FlowPane pebbles = new FlowPane();
 
+    /**
+     * Új kupacnézet.
+     *
+     * @param index a kupac 0-tól számozott indexe (a cím 1-től számoz)
+     */
     HeapView(int index) {
         this.index = index;
         getStyleClass().add("heap");
@@ -40,6 +45,11 @@ final class HeapView extends VBox {
         getChildren().addAll(title, countLabel, pebbles);
     }
 
+    /**
+     * A kupac indexe.
+     *
+     * @return 0-tól számozott index
+     */
     int index() {
         return index;
     }
@@ -73,6 +83,11 @@ final class HeapView extends VBox {
         }
     }
 
+    /**
+     * Kijelölt megjelenés be- vagy kikapcsolása.
+     *
+     * @param selected {@code true}, ha a kupac ki van jelölve
+     */
     void setSelected(boolean selected) {
         getStyleClass().remove("selected");
         if (selected) {
@@ -80,6 +95,11 @@ final class HeapView extends VBox {
         }
     }
 
+    /**
+     * Kattintható-e most a kupac (az ember lép és van benne kavics).
+     *
+     * @param interactive {@code false} esetén halványabb, nem kattintható megjelenés
+     */
     void setInteractive(boolean interactive) {
         getStyleClass().remove("disabled");
         if (!interactive) {

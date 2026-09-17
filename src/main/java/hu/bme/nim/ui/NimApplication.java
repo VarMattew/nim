@@ -21,10 +21,21 @@ public final class NimApplication extends Application {
 
     private Stage stage;
 
+    /**
+     * A JavaFX alkalmazás indítása (blokkol, amíg az ablak be nem záródik).
+     *
+     * @param args parancssori argumentumok, továbbadva a JavaFX-nek
+     */
     public static void launchApp(String[] args) {
         Application.launch(NimApplication.class, args);
     }
 
+    /**
+     * Az elsődleges ablak felépítése: cím, ikon, méretkorlátok, beállító képernyő.
+     *
+     * @param primaryStage a JavaFX által adott elsődleges ablak
+     * @throws IOException ha az FXML nem tölthető be
+     */
     @Override
     public void start(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
@@ -36,7 +47,12 @@ public final class NimApplication extends Application {
         stage.show();
     }
 
-    /** Beállító képernyő; {@code previous} az előző beállítás, ha volt (előtöltéshez). */
+    /**
+     * Beállító képernyő megjelenítése.
+     *
+     * @param previous az előző beállítás az űrlap előtöltéséhez, vagy {@code null} az alapértelmezésekhez
+     * @throws IOException ha a {@code setup.fxml} nem tölthető be
+     */
     public void showSetup(GameSettings previous) throws IOException {
         FXMLLoader loader = loader("setup.fxml");
         Parent root = loader.load();
@@ -45,7 +61,12 @@ public final class NimApplication extends Application {
         setRoot(root);
     }
 
-    /** Játék képernyő a megadott beállításokkal. */
+    /**
+     * Játék képernyő megjelenítése és új játszma indítása.
+     *
+     * @param settings a beállító képernyőn összeállított beállítások
+     * @throws IOException ha a {@code game.fxml} nem tölthető be
+     */
     public void showGame(GameSettings settings) throws IOException {
         FXMLLoader loader = loader("game.fxml");
         Parent root = loader.load();

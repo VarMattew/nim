@@ -17,15 +17,29 @@ public enum Difficulty {
         this.blunderProbability = blunderProbability;
     }
 
+    /**
+     * Magyar nyelvű megnevezés a felülethez.
+     *
+     * @return {@code "Könnyű"}, {@code "Közepes"} vagy {@code "Nehéz"}
+     */
     public String displayName() {
         return displayName;
     }
 
-    /** Annak valószínűsége, hogy nyerő állásban az AI szándékosan nem az optimális lépést választja. */
+    /**
+     * Annak valószínűsége, hogy nyerő állásban az AI szándékosan nem az optimális lépést választja.
+     *
+     * @return valószínűség a {@code [0, 1]} intervallumban; 0 a mindig optimális szinteknél
+     */
     public double blunderProbability() {
         return blunderProbability;
     }
 
+    /**
+     * A megjelenített név, hogy a felület listáiban is olvasható legyen.
+     *
+     * @return ugyanaz, mint {@link #displayName()}
+     */
     @Override
     public String toString() {
         return displayName;

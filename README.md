@@ -243,6 +243,15 @@ mvn clean javafx:run
 mvn test
 ```
 
+### Generate the API documentation
+
+Every class and public member carries Javadoc (in Hungarian, matching the UI), and the build is configured
+with `-Xdoclint:all`, so the documentation can be generated without warnings:
+
+```bash
+mvn javadoc:javadoc        # → target/site/apidocs/index.html
+```
+
 ## Usage
 
 ### Graphical application

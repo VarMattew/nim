@@ -99,6 +99,12 @@ public final class GameController {
         aiTimer.setOnFinished(e -> performAiMove());
     }
 
+    /**
+     * Az alkalmazás hívja az FXML betöltése után; felépíti a motort és elindítja a játszmát.
+     *
+     * @param app      az alkalmazás (képernyőváltáshoz)
+     * @param settings a játék beállításai
+     */
     void init(NimApplication app, GameSettings settings) {
         this.app = app;
         this.settings = settings;

@@ -112,7 +112,12 @@ public final class SetupController {
         maxTakeSpinner.disableProperty().bind(rulesLimited.selectedProperty().not());
     }
 
-    /** Az alkalmazás hívja betöltés után; {@code previous} előtölti az űrlapot. */
+    /**
+     * Az alkalmazás hívja az FXML betöltése után.
+     *
+     * @param app      az alkalmazás (képernyőváltáshoz)
+     * @param previous az űrlap előtöltéséhez használt korábbi beállítás, vagy {@code null}
+     */
     void init(NimApplication app, GameSettings previous) {
         this.app = app;
         GameSettings s = previous != null ? previous : GameSettings.defaults();
@@ -297,7 +302,11 @@ public final class SetupController {
         errorLabel.setText(message);
     }
 
-    /** Szerkeszthető Spinner: a beírt szöveg fókuszvesztésnél is érvényesüljön. */
+    /**
+     * Szerkeszthető Spinner: a beírt szöveg fókuszvesztésnél is érvényesüljön.
+     *
+     * @param spinner a beállítandó Spinner
+     */
     private static void commitOnFocusLost(Spinner<Integer> spinner) {
         spinner.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
             if (!isFocused) {

@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Grundy-számok alapján döntő gépi játékos.
  * <ul>
- *     <li>Ha az állás Grundy-száma ≠ 0 (nyerő állás), olyan lépést választ, amely után 0 lesz.</li>
+ *     <li>Ha az állás Grundy-száma nem 0 (nyerő állás), olyan lépést választ, amely után 0 lesz.</li>
  *     <li>Ha 0 (vesztő állás), nincs jó lépés: a nehézségi szinttől függően véletlen legális
  *         lépést tesz, vagy "húzza az időt", hogy az ellenfélnek legyen alkalma hibázni.</li>
  *     <li>Könnyű szinten nyerő állásból is időnként szándékosan hibázik.</li>
@@ -22,17 +22,35 @@ public final class AiPlayer {
     private final Difficulty difficulty;
     private final Random random;
 
+    /**
+     * Gépi játékos új véletlenszám-forrással.
+     *
+     * @param analyzer   az állás-elemző
+     * @param difficulty a nehézségi szint
+     */
     public AiPlayer(NimAnalyzer analyzer, Difficulty difficulty) {
         this(analyzer, difficulty, new Random());
     }
 
-    /** Teszteléshez: determinisztikus {@link Random} adható meg. */
+    /**
+     * Gépi játékos megadott véletlenszám-forrással (teszteléshez determinisztikus maggal).
+     *
+     * @param analyzer   az állás-elemző
+     * @param difficulty a nehézségi szint
+     * @param random     a véletlenszám-generátor a lépésválasztáshoz
+     * @throws NullPointerException ha bármely paraméter {@code null}
+     */
     public AiPlayer(NimAnalyzer analyzer, Difficulty difficulty, Random random) {
         this.analyzer = Objects.requireNonNull(analyzer, "analyzer");
         this.difficulty = Objects.requireNonNull(difficulty, "difficulty");
         this.random = Objects.requireNonNull(random, "random");
     }
 
+    /**
+     * A játékos nehézségi szintje.
+     *
+     * @return a szint
+     */
     public Difficulty difficulty() {
         return difficulty;
     }
@@ -40,6 +58,8 @@ public final class AiPlayer {
     /**
      * Lépést választ az adott állásban.
      *
+     * @param state az állás, amelyben a gép lép
+     * @return egy legális lépés; nyerő állásból (a szándékos hibázást leszámítva) mindig 0 Grundy-számú állásba vezet
      * @throws IllegalStateException ha a játék már véget ért
      */
     public Move chooseMove(GameState state) {

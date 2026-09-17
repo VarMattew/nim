@@ -11,8 +11,21 @@ import java.util.Objects;
  */
 public final class Game {
 
-    /** Egy megtett lépés naplóbejegyzése. */
+    /**
+     * Egy megtett lépés naplóbejegyzése.
+     *
+     * @param turn   a lépés sorszáma (1-től)
+     * @param player aki lépett
+     * @param move   a lépés
+     * @param before az állás a lépés előtt
+     * @param after  az állás a lépés után
+     */
     public record Entry(int turn, Player player, Move move, GameState before, GameState after) {
+        /**
+         * Naplósor.
+         *
+         * @return pl. {@code "3. Gép: 1 kavics a(z) 2. kupacból → [4, 4, 1]"}
+         */
         @Override
         public String toString() {
             return turn + ". " + player.displayName() + ": " + move + " → " + after.heaps();
@@ -23,27 +36,58 @@ public final class Game {
     private GameState state;
     private final List<Entry> history = new ArrayList<>();
 
+    /**
+     * Új játszma a megadott kezdőállásból.
+     *
+     * @param initialState a kezdőállás
+     * @throws NullPointerException ha {@code initialState == null}
+     */
     public Game(GameState initialState) {
         this.initialState = Objects.requireNonNull(initialState, "initialState");
         this.state = initialState;
     }
 
+    /**
+     * A kezdőállás (visszavágóhoz).
+     *
+     * @return a játszma kezdőállása
+     */
     public GameState initialState() {
         return initialState;
     }
 
+    /**
+     * Az aktuális állás.
+     *
+     * @return a legutóbbi lépés utáni állás
+     */
     public GameState state() {
         return state;
     }
 
+    /**
+     * A megtett lépések naplója, időrendben.
+     *
+     * @return módosíthatatlan nézet
+     */
     public List<Entry> history() {
         return Collections.unmodifiableList(history);
     }
 
+    /**
+     * Véget ért-e a játszma.
+     *
+     * @return {@code true}, ha nincs több kavics
+     */
     public boolean isOver() {
         return state.isOver();
     }
 
+    /**
+     * A győztes.
+     *
+     * @return a győztes, vagy {@code null}, ha a játszma még tart
+     */
     public Player winner() {
         return state.winner();
     }
@@ -51,6 +95,7 @@ public final class Game {
     /**
      * A soron következő játékos megteszi a lépést.
      *
+     * @param move a lépés
      * @return az új állás
      * @throws IllegalArgumentException ha a lépés nem legális
      * @throws IllegalStateException    ha a játék már véget ért
@@ -66,7 +111,11 @@ public final class Game {
         return after;
     }
 
-    /** Visszavonja az utolsó lépést (ha volt). */
+    /**
+     * Visszavonja az utolsó lépést.
+     *
+     * @return {@code true}, ha volt mit visszavonni
+     */
     public boolean undo() {
         if (history.isEmpty()) {
             return false;
@@ -76,7 +125,11 @@ public final class Game {
         return true;
     }
 
-    /** Ugyanezzel a kezdőállással új játszma ("visszavágó"). */
+    /**
+     * Ugyanezzel a kezdőállással új játszma ("visszavágó").
+     *
+     * @return új, üres történetű játszma
+     */
     public Game rematch() {
         return new Game(initialState);
     }

@@ -15,6 +15,15 @@ import hu.bme.nim.ui.NimApplication;
  */
 public final class App {
 
+    private App() {
+    }
+
+    /**
+     * Program indítása.
+     *
+     * @param args parancssori argumentumok; {@code --console [maxTake|0] [kupac...]} a konzolos
+     *             bemutatót futtatja, egyébként a JavaFX felület indul
+     */
     public static void main(String[] args) {
         if (args.length > 0 && "--console".equals(args[0])) {
             String[] rest = new String[args.length - 1];

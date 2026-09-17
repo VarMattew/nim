@@ -28,6 +28,11 @@ final class ConsoleDemo {
     private ConsoleDemo() {
     }
 
+    /**
+     * Lefuttat egy AI-vs-AI játszmát és kiírja a konzolra.
+     *
+     * @param args {@code [maxTake|0=korlátlan] [kupac1 kupac2 ...]}; üresen: klasszikus Nim, kupacok 7, 5, 3
+     */
     static void run(String[] args) {
         Rules rules = Rules.classicNim();
         int[] heaps = {7, 5, 3};
