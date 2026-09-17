@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -41,11 +42,11 @@
             <BorderPane>
                 <center>
                     <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
-                        <HBox fx:id="heapsBox" spacing="14" alignment="TOP_CENTER">
+                        <FlowPane fx:id="heapsBox" hgap="14" vgap="14" alignment="TOP_CENTER">
                             <padding>
                                 <Insets top="12" right="8" bottom="12" left="8"/>
                             </padding>
-                        </HBox>
+                        </FlowPane>
                     </ScrollPane>
                 </center>
                 <bottom>
@@ -54,7 +55,13 @@
                             <Insets top="8" right="6" bottom="0" left="6"/>
                         </BorderPane.margin>
                         <Label fx:id="movePromptLabel" styleClass="section" text="Válassz egy kupacot!"/>
-                        <HBox spacing="10" alignment="CENTER_LEFT">
+                        <!-- AI vs. AI vezérlők -->
+                        <HBox fx:id="autoBox" spacing="10" alignment="CENTER_LEFT" visible="false" managed="false">
+                            <Button fx:id="pauseButton" styleClass="take" text="Szünet" onAction="#onPauseResume"/>
+                            <Button fx:id="stepButton" styleClass="take" text="Egy lépés" onAction="#onStep"/>
+                            <Label fx:id="autoInfoLabel" styleClass="hint" text=""/>
+                        </HBox>
+                        <HBox fx:id="humanBox" spacing="10" alignment="CENTER_LEFT">
                             <Label text="Elveszek:"/>
                             <HBox fx:id="takeButtonsBox" spacing="6" alignment="CENTER_LEFT"/>
                             <Spinner fx:id="takeSpinner" prefWidth="84" editable="true" visible="false" managed="false"/>

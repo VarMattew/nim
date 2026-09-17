@@ -63,6 +63,9 @@ public final class SetupController {
     @FXML private ComboBox<StarterOption> starterBox;
     @FXML private Label difficultyHintLabel;
     @FXML private CheckBox tutorCheck;
+    @FXML private CheckBox aiVsAiCheck;
+    @FXML private VBox aiVsAiBox;
+    @FXML private ComboBox<Difficulty> difficultyBBox;
     @FXML private Label typeLabel;
     @FXML private Button startButton;
 
@@ -82,18 +85,25 @@ public final class SetupController {
 
         heapCountSpinner.valueProperty().addListener((obs, oldV, newV) -> rebuildHeapSpinners(newV, null));
 
-        difficultyBox.setItems(FXCollections.observableArrayList(Difficulty.values()));
-        difficultyBox.setConverter(new StringConverter<>() {
+        StringConverter<Difficulty> difficultyConverter = new StringConverter<>() {
             @Override public String toString(Difficulty d) { return d == null ? "" : d.displayName(); }
             @Override public Difficulty fromString(String s) { return null; }
-        });
+        };
+        difficultyBox.setItems(FXCollections.observableArrayList(Difficulty.values()));
+        difficultyBox.setConverter(difficultyConverter);
         difficultyBox.valueProperty().addListener((obs, o, n) -> updateDifficultyHint());
+        difficultyBBox.setItems(FXCollections.observableArrayList(Difficulty.values()));
+        difficultyBBox.setConverter(difficultyConverter);
+
+        aiVsAiBox.visibleProperty().bind(aiVsAiCheck.selectedProperty());
+        aiVsAiBox.managedProperty().bind(aiVsAiCheck.selectedProperty());
+        aiVsAiCheck.selectedProperty().addListener((obs, o, n) -> updateStarterLabels());
 
         starterBox.setItems(FXCollections.observableArrayList(STARTERS));
         starterBox.setCellFactory(lv -> new ListCell<>() {
             @Override protected void updateItem(StarterOption item, boolean empty) {
                 super.updateItem(item, empty);
-                setText(empty || item == null ? "" : item.label());
+                setText(empty || item == null ? "" : starterBox.getConverter().toString(item));
             }
         });
 
@@ -121,8 +131,28 @@ public final class SetupController {
         difficultyBox.setValue(s.difficulty());
         starterBox.setValue(STARTERS.stream().filter(o -> o.player() == s.starter()).findFirst().orElse(STARTERS.get(0)));
         tutorCheck.setSelected(s.tutorMode());
+        aiVsAiCheck.setSelected(s.aiVsAi());
+        difficultyBBox.setValue(s.secondDifficulty() != null ? s.secondDifficulty() : Difficulty.HARD);
         onRulesChanged();
         updateDifficultyHint();
+        updateStarterLabels();
+    }
+
+    /** AI vs. AI módban a "Ki kezd" lista szövegei a gépekre utalnak. */
+    private void updateStarterLabels() {
+        boolean ai = aiVsAiCheck.isSelected();
+        starterBox.setConverter(new StringConverter<>() {
+            @Override public String toString(StarterOption o) {
+                if (o == null) return "";
+                if (!ai) return o.label();
+                return o.player() == null ? "Véletlen" : o.player() == Player.HUMAN ? "Gép A kezd" : "Gép B kezd";
+            }
+            @Override public StarterOption fromString(String s) { return null; }
+        });
+        // a gombcella frissítéséhez újra beállítjuk az értéket
+        StarterOption current = starterBox.getValue();
+        starterBox.setValue(null);
+        starterBox.setValue(current);
     }
 
     // ---- kupacok ----
@@ -250,7 +280,8 @@ public final class SetupController {
             return;
         }
         GameSettings settings = new GameSettings(heaps, currentRules(), difficultyBox.getValue(),
-                starterBox.getValue().player(), tutorCheck.isSelected());
+                starterBox.getValue().player(), tutorCheck.isSelected(),
+                aiVsAiCheck.isSelected(), aiVsAiCheck.isSelected() ? difficultyBBox.getValue() : null);
         try {
             app.showGame(settings);
         } catch (IOException e) {

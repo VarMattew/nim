@@ -74,16 +74,15 @@
                     <fx:define>
                         <ToggleGroup fx:id="rulesGroup"/>
                     </fx:define>
-                    <RadioButton fx:id="rulesStandard" text="1, 2 vagy 3 kavics vehető el" toggleGroup="$rulesGroup"
-                                 selected="true"/>
+                    <RadioButton fx:id="rulesStandard" text="1, 2 vagy 3 kavics vehető el" toggleGroup="$rulesGroup"/>
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <RadioButton fx:id="rulesLimited" text="Egyéni felső korlát: 1 –" toggleGroup="$rulesGroup"/>
                         <Spinner fx:id="maxTakeSpinner" prefWidth="70" editable="true"/>
                         <Label text="kavics"/>
                     </HBox>
-                    <RadioButton fx:id="rulesClassic" text="Korlátlan (klasszikus Nim)" toggleGroup="$rulesGroup"/>
+                    <RadioButton fx:id="rulesClassic" text="Korlátlan (klasszikus Nim)" toggleGroup="$rulesGroup" selected="true"/>
                     <Label fx:id="grundyHintLabel" styleClass="hint" wrapText="true"
-                           text="Kupaconkénti Grundy-szám: g(n) = n mod 4"/>
+                           text="Kupaconkénti Grundy-szám: g(n) = n (a kupacméret maga)"/>
 
                     <Separator/>
                     <Label styleClass="section" text="Ellenfél"/>
@@ -98,6 +97,18 @@
                     <Separator/>
                     <CheckBox fx:id="tutorCheck" text="Oktató mód: Grundy-számok, XOR és T(v) megjelenítése" selected="true"
                               wrapText="true"/>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Separator/>
+                    <CheckBox fx:id="aiVsAiCheck" styleClass="hint" text="Bemutató: a gép önmaga ellen játszik (AI vs. AI)"
+                              wrapText="true"/>
+                    <VBox fx:id="aiVsAiBox" spacing="6" visible="false" managed="false">
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <Label styleClass="hint" text="Gép A (a fenti nehézség)   ·   Gép B:"/>
+                            <ComboBox fx:id="difficultyBBox" prefWidth="130"/>
+                        </HBox>
+                        <Label styleClass="hint" wrapText="true"
+                               text="„Én kezdek” = Gép A kezd. Két Nehéz gép adja az optimális lejátszást; a játék képernyőn Szünet és Egy lépés gombokkal követhető."/>
+                    </VBox>
                 </VBox>
             </HBox>
         </ScrollPane>

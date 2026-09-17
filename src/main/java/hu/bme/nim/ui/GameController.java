@@ -13,12 +13,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -26,23 +28,36 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-/** A játék képernyő vezérlője: emberi lépések, AI lépések, oktató panel, napló. */
+/**
+ * A játék képernyő vezérlője: emberi lépések, AI lépések, oktató panel, napló.
+ * <p>
+ * AI vs. AI (bemutató) módban mindkét helyen gép játszik; az ember Szünet/Folytatás és
+ * "Egy lépés" gombokkal követi a játszmát.
+ */
 public final class GameController {
 
     /** Ennyi elvétel-gombig gombokat mutatunk, fölötte Spinnert. */
     private static final int MAX_TAKE_BUTTONS = 6;
     private static final Duration AI_DELAY = Duration.millis(900);
+    private static final Duration AI_VS_AI_DELAY = Duration.millis(1400);
 
     @FXML private Label rulesLabel;
     @FXML private Label statusLabel;
     @FXML private Button undoButton;
     @FXML private SplitPane splitPane;
-    @FXML private HBox heapsBox;
+    @FXML private FlowPane heapsBox;
     @FXML private Label movePromptLabel;
+    @FXML private HBox autoBox;
+    @FXML private Button pauseButton;
+    @FXML private Button stepButton;
+    @FXML private Label autoInfoLabel;
+    @FXML private HBox humanBox;
     @FXML private HBox takeButtonsBox;
     @FXML private Spinner<Integer> takeSpinner;
     @FXML private Button takeButton;
@@ -59,7 +74,8 @@ public final class GameController {
     private Game game;
     private GrundyCalculator calc;
     private NimAnalyzer analyzer;
-    private AiPlayer ai;
+    /** Melyik helyen melyik gép játszik. Ember elleni játékban csak az {@link Player#AI} kulcs él. */
+    private final Map<Player, AiPlayer> ais = new EnumMap<>(Player.class);
     private int binaryWidth;
 
     private final List<HeapView> heapViews = new ArrayList<>();
@@ -68,6 +84,8 @@ public final class GameController {
     private Move lastMove;
     private final PauseTransition aiTimer = new PauseTransition(AI_DELAY);
     private boolean aiThinking;
+    /** AI vs. AI módban: szünetel-e az automatikus lejátszás. */
+    private boolean paused;
 
     @FXML
     private void initialize() {
@@ -86,13 +104,25 @@ public final class GameController {
         this.settings = settings;
         this.calc = new GrundyCalculator(settings.rules());
         this.analyzer = new NimAnalyzer(calc);
-        this.ai = new AiPlayer(analyzer, settings.difficulty());
+        ais.put(Player.AI, new AiPlayer(analyzer, settings.difficultyOf(Player.AI)));
+        if (settings.aiVsAi()) {
+            ais.put(Player.HUMAN, new AiPlayer(analyzer, settings.difficultyOf(Player.HUMAN)));
+            aiTimer.setDuration(AI_VS_AI_DELAY);
+        }
 
-        rulesLabel.setText("Szabály: " + settings.rules() + "   ·   Ellenfél: " + settings.difficulty().displayName());
+        rulesLabel.setText("Szabály: " + settings.rules() + "   ·   "
+                + (settings.aiVsAi()
+                ? "Gép A: " + settings.difficultyOf(Player.HUMAN).displayName()
+                + " vs. Gép B: " + settings.difficultyOf(Player.AI).displayName()
+                : "Ellenfél: " + settings.difficulty().displayName()));
         tutorBox.setVisible(settings.tutorMode());
         tutorBox.setManaged(settings.tutorMode());
-        hintButton.setVisible(settings.tutorMode());
-        hintButton.setManaged(settings.tutorMode());
+        hintButton.setVisible(settings.tutorMode() && !settings.aiVsAi());
+        hintButton.setManaged(settings.tutorMode() && !settings.aiVsAi());
+        autoBox.setVisible(settings.aiVsAi());
+        autoBox.setManaged(settings.aiVsAi());
+        humanBox.setVisible(!settings.aiVsAi());
+        humanBox.setManaged(!settings.aiVsAi());
 
         startGame(settings.initialState(settings.resolveStarter(new Random())));
     }
@@ -100,6 +130,7 @@ public final class GameController {
     private void startGame(GameState initial) {
         aiTimer.stop();
         aiThinking = false;
+        paused = false;
         game = new Game(initial);
         binaryWidth = GrundyCalculator.binaryWidth(initial);
         selectedHeap = -1;
@@ -118,12 +149,20 @@ public final class GameController {
 
         logList.getItems().clear();
         log("v0  Kezdőállás " + initial.heaps() + "   T(J) = " + calc.type(initial)
-                + "   ·   Kezd: " + initial.currentPlayer().displayName());
+                + "   ·   Kezd: " + name(initial.currentPlayer()));
 
         refresh();
-        if (!game.isOver() && game.state().currentPlayer() == Player.AI) {
+        if (!game.isOver() && isAi(game.state().currentPlayer())) {
             scheduleAiMove();
         }
+    }
+
+    private boolean isAi(Player player) {
+        return ais.containsKey(player);
+    }
+
+    private String name(Player player) {
+        return settings.nameOf(player);
     }
 
     // ---- emberi lépés ----
@@ -139,10 +178,20 @@ public final class GameController {
     }
 
     private boolean humanCanMove() {
-        return !game.isOver() && !aiThinking && game.state().currentPlayer() == Player.HUMAN;
+        return !game.isOver() && !aiThinking && !isAi(game.state().currentPlayer());
     }
 
     private void buildTakeControls() {
+        if (settings.aiVsAi()) {
+            movePromptLabel.setText(game.isOver() ? "A bemutató véget ért."
+                    : paused ? "Szünet – lépj tovább az „Egy lépés” gombbal, vagy folytasd."
+                    : "A gépek egymás ellen játszanak.");
+            pauseButton.setText(paused ? "Folytatás" : "Szünet");
+            pauseButton.setDisable(game.isOver());
+            stepButton.setDisable(game.isOver() || !paused || aiThinking);
+            autoInfoLabel.setText(game.isOver() ? "" : "Következik: " + name(game.state().currentPlayer()));
+            return;
+        }
         takeButtonsBox.getChildren().clear();
         boolean hasSelection = selectedHeap >= 0 && humanCanMove();
         int max = hasSelection ? game.state().rules().maxTakeFrom(game.state().heap(selectedHeap)) : 0;
@@ -204,6 +253,13 @@ public final class GameController {
     // ---- AI lépés ----
 
     private void scheduleAiMove() {
+        if (game.isOver() || !isAi(game.state().currentPlayer())) {
+            return;
+        }
+        if (settings.aiVsAi() && paused) {
+            refresh();
+            return;
+        }
         aiThinking = true;
         selectedHeap = -1;
         markedCount = 0;
@@ -213,12 +269,16 @@ public final class GameController {
 
     private void performAiMove() {
         aiThinking = false;
-        if (game.isOver() || game.state().currentPlayer() != Player.AI) {
+        Player current = game.state().currentPlayer();
+        if (game.isOver() || !isAi(current)) {
             refresh();
             return;
         }
-        Move move = ai.chooseMove(game.state());
-        applyMove(Player.AI, move);
+        Move move = ais.get(current).chooseMove(game.state());
+        applyMove(current, move);
+        if (!game.isOver() && isAi(game.state().currentPlayer())) {
+            scheduleAiMove(); // AI vs. AI: jön a következő gép (szünetben megáll)
+        }
     }
 
     private void applyMove(Player player, Move move) {
@@ -226,13 +286,39 @@ public final class GameController {
         lastMove = move;
         selectedHeap = -1;
         markedCount = 0;
-        log("v" + game.history().size() + "  " + player.displayName() + ": " + move + "  →  " + after.heaps()
+        log("v" + game.history().size() + "  " + name(player) + ": " + move + "  →  " + after.heaps()
                 + (settings.tutorMode() ? "   g = " + calc.grundy(after) + ", T = " + calc.type(after) : ""));
         refresh();
         if (game.isOver()) {
             // Animációs visszahívásból (PauseTransition) nem szabad showAndWait-et hívni,
             // ezért a dialógus a következő eseményciklusban nyílik.
             Platform.runLater(this::showEndDialog);
+        }
+    }
+
+    // ---- AI vs. AI vezérlés ----
+
+    @FXML
+    private void onPauseResume() {
+        paused = !paused;
+        if (paused) {
+            aiTimer.stop();
+            aiThinking = false;
+            refresh();
+        } else {
+            scheduleAiMove();
+        }
+    }
+
+    @FXML
+    private void onStep() {
+        if (!settings.aiVsAi() || game.isOver() || aiThinking) {
+            return;
+        }
+        aiTimer.stop();
+        Player current = game.state().currentPlayer();
+        if (isAi(current)) {
+            applyMove(current, ais.get(current).chooseMove(game.state()));
         }
     }
 
@@ -243,13 +329,19 @@ public final class GameController {
         aiTimer.stop();
         aiThinking = false;
         boolean any = false;
-        // Visszavonás addig, amíg újra az ember következik (az AI válaszát is visszavesszük).
-        do {
-            if (!game.undo()) {
-                break;
-            }
-            any = true;
-        } while (game.state().currentPlayer() != Player.HUMAN);
+        if (settings.aiVsAi()) {
+            // Bemutatóban egy lépést vonunk vissza, és megállunk.
+            any = game.undo();
+            paused = true;
+        } else {
+            // Visszavonás addig, amíg újra az ember következik (az AI válaszát is visszavesszük).
+            do {
+                if (!game.undo()) {
+                    break;
+                }
+                any = true;
+            } while (game.state().currentPlayer() != Player.HUMAN);
+        }
         if (any) {
             lastMove = null;
             selectedHeap = -1;
@@ -325,10 +417,21 @@ public final class GameController {
 
     private void renderStatus() {
         statusLabel.getStyleClass().removeAll("human-turn", "ai-turn", "win", "lose");
+        Player current = game.state().currentPlayer();
         if (game.isOver()) {
-            boolean humanWon = game.winner() == Player.HUMAN;
-            statusLabel.setText(humanWon ? "Nyertél! Te vetted el az utolsó kavicsot." : "A gép nyert – ő vette el az utolsó kavicsot.");
-            statusLabel.getStyleClass().add(humanWon ? "win" : "lose");
+            Player winner = game.winner();
+            if (settings.aiVsAi()) {
+                statusLabel.setText(name(winner) + " nyert – ő vette el az utolsó kavicsot"
+                        + (winner == game.initialState().currentPlayer() ? " (a kezdő)." : " (a második)."));
+                statusLabel.getStyleClass().add("win");
+            } else {
+                boolean humanWon = winner == Player.HUMAN;
+                statusLabel.setText(humanWon ? "Nyertél! Te vetted el az utolsó kavicsot." : "A gép nyert – ő vette el az utolsó kavicsot.");
+                statusLabel.getStyleClass().add(humanWon ? "win" : "lose");
+            }
+        } else if (settings.aiVsAi()) {
+            statusLabel.setText(paused ? "Szünet. Következik: " + name(current) : name(current) + " gondolkodik…");
+            statusLabel.getStyleClass().add("ai-turn");
         } else if (aiThinking) {
             statusLabel.setText("A gép gondolkodik…");
             statusLabel.getStyleClass().add("ai-turn");
@@ -359,8 +462,13 @@ public final class GameController {
         tutorTypeLabel.getStyleClass().removeAll("tutor-type-I", "tutor-type-II");
         tutorTypeLabel.getStyleClass().add(type == PositionType.I ? "tutor-type-I" : "tutor-type-II");
 
+        String mover = name(s.currentPlayer());
         if (game.isOver()) {
             tutorExplainLabel.setText("Végállapot: minden Grundy-szám 0. Aki ide lépett, nyert.");
+        } else if (settings.aiVsAi()) {
+            tutorExplainLabel.setText(type == PositionType.I
+                    ? mover + " nyerő állásban van: olyan lépést keres, amely után az XOR 0."
+                    : mover + " vesztő állásban van (XOR = 0): bármit lép, az ellenfélnek lesz nyerő lépése.");
         } else if (s.currentPlayer() == Player.HUMAN) {
             tutorExplainLabel.setText(type == PositionType.I
                     ? "Neked van nyerő stratégiád: lépj úgy, hogy a Grundy-számok XOR-ja 0 legyen (a \"Tipp\" megmutatja)."
@@ -388,16 +496,24 @@ public final class GameController {
     }
 
     private void showEndDialog() {
-        boolean humanWon = game.winner() == Player.HUMAN;
+        Player winner = game.winner();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Játék vége");
-        alert.setHeaderText(humanWon ? "Nyertél!" : "A gép nyert.");
-        alert.setContentText((humanWon ? "Te vetted el az utolsó kavicsot." : "A gép vette el az utolsó kavicsot.")
-                + "\nLépések száma: " + game.history().size()
-                + "\nA kezdőállás típusa T(J) = " + calc.type(game.initialState()) + " volt.");
+        String typeInfo = "\nA kezdőállás típusa T(J) = " + calc.type(game.initialState()) + " volt"
+                + " (kezdett: " + name(game.initialState().currentPlayer()) + ").";
+        if (settings.aiVsAi()) {
+            alert.setHeaderText(name(winner) + " nyert.");
+            alert.setContentText(name(winner) + " vette el az utolsó kavicsot."
+                    + "\nLépések száma: " + game.history().size() + typeInfo);
+        } else {
+            boolean humanWon = winner == Player.HUMAN;
+            alert.setHeaderText(humanWon ? "Nyertél!" : "A gép nyert.");
+            alert.setContentText((humanWon ? "Te vetted el az utolsó kavicsot." : "A gép vette el az utolsó kavicsot.")
+                    + "\nLépések száma: " + game.history().size() + typeInfo);
+        }
         ButtonType rematch = new ButtonType("Visszavágó");
         ButtonType setup = new ButtonType("Új beállítás");
-        ButtonType close = new ButtonType("Bezár", javafx.scene.control.ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType close = new ButtonType("Bezár", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(rematch, setup, close);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent()) {

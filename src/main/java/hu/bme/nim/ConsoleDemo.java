@@ -29,7 +29,7 @@ final class ConsoleDemo {
     }
 
     static void run(String[] args) {
-        Rules rules = Rules.standard();
+        Rules rules = Rules.classicNim();
         int[] heaps = {7, 5, 3};
         if (args.length >= 1) {
             int k = Integer.parseInt(args[0]);

@@ -36,7 +36,7 @@ hu.bme.nim
 
 ## Felület
 
-- **Beállító képernyő:** kupacok száma (1–8) és mérete (0–50) kupaconként, véletlen méretek adott
+- **Beállító képernyő:** kupacok száma (1–20) és mérete (0–50) kupaconként, véletlen méretek adott
   tartományból vagy teljesen véletlen felállás; lépésszabály (1–3 / egyéni 1–k / korlátlan);
   nehézség (Könnyű, Közepes, Nehéz); ki kezd; oktató mód. Alul élőben látszik a kezdőállás
   Grundy-száma és `T(J)`.

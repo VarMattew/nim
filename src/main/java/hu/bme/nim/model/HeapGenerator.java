@@ -7,7 +7,7 @@ import java.util.Random;
 /** Véletlen kezdőkupacok előállítása a beállító képernyő "Véletlen" gombjához. */
 public final class HeapGenerator {
 
-    public static final int MAX_HEAPS = 8;
+    public static final int MAX_HEAPS = 20;
     public static final int MAX_HEAP_SIZE = 50;
 
     private final Random random;

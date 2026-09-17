@@ -20,7 +20,7 @@ public record Rules(int maxTake) {
         }
     }
 
-    /** Az alapértelmezett változat: 1, 2 vagy 3 kavics vehető el. */
+    /** A "1-2-3" változat: 1, 2 vagy 3 kavics vehető el. */
     public static Rules standard() {
         return new Rules(3);
     }
