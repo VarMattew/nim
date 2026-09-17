@@ -21,33 +21,26 @@ Computer Engineering BSc · Faculty of Electrical Engineering and Informatics (V
 
 ## Table of contents
 
-- [NIM — a Grundy-number AI opponent](#nim--a-grundy-number-ai-opponent)
-  - [Table of contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Features](#features)
-  - [The mathematics](#the-mathematics)
-    - [Combinatorial games and position types](#combinatorial-games-and-position-types)
-    - [Grundy numbering](#grundy-numbering)
-    - [Grundy numbers of a single heap](#grundy-numbers-of-a-single-heap)
-    - [The Sprague–Grundy theorem: combining heaps with XOR](#the-spraguegrundy-theorem-combining-heaps-with-xor)
-    - [The winning move](#the-winning-move)
-    - [Why the raw heap sizes must not be XOR-ed](#why-the-raw-heap-sizes-must-not-be-xor-ed)
-    - [A worked example](#a-worked-example)
-  - [How the AI plays](#how-the-ai-plays)
-  - [Getting started](#getting-started)
-    - [Prerequisites](#prerequisites)
-    - [Build \& run](#build--run)
-    - [Run the tests](#run-the-tests)
-  - [Usage](#usage)
-    - [Graphical application](#graphical-application)
-    - [Console demo](#console-demo)
-  - [Architecture](#architecture)
-  - [Testing](#testing)
-  - [Project structure](#project-structure)
-  - [Roadmap](#roadmap)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Acknowledgements](#acknowledgements)
+- [Overview](#overview)
+- [Features](#features)
+- [The mathematics](#the-mathematics)
+  - [Combinatorial games and position types](#combinatorial-games-and-position-types)
+  - [Grundy numbering](#grundy-numbering)
+  - [Grundy numbers of a single heap](#grundy-numbers-of-a-single-heap)
+  - [The Sprague–Grundy theorem: combining heaps with XOR](#the-spraguegrundy-theorem-combining-heaps-with-xor)
+  - [The winning move](#the-winning-move)
+  - [Why the raw heap sizes must not be XOR-ed](#why-the-raw-heap-sizes-must-not-be-xor-ed)
+  - [A worked example](#a-worked-example)
+- [How the AI plays](#how-the-ai-plays)
+- [Getting started](#getting-started)
+- [Usage](#usage)
+- [Architecture](#architecture)
+- [Testing](#testing)
+- [Project structure](#project-structure)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ---
 
@@ -238,7 +231,7 @@ SDK installation is required.
 ### Build & run
 
 ```bash
-git clone https://github.com/VarMattew/nim.git
+git clone https://github.com/<your-account>/nim.git
 cd nim
 mvn clean javafx:run
 ```
