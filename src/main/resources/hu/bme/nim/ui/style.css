@@ -1,162 +1,641 @@
-/* NIM – Grundy AI – felület stílus */
+/* =====================================================================
+   NIM – BME téma (bordó–fehér), minimalista, letisztult.
+   Minden JavaFX vezérlő alapmegjelenése (Modena) felül van definiálva.
+   ===================================================================== */
 
 .root {
-    -fx-font-family: "Segoe UI", "Noto Sans", sans-serif;
+    /* --- paletta --- */
+    -bme:            #7b1e2e;   /* BME bordó */
+    -bme-dark:       #5c1521;
+    -bme-mid:        #9a2f41;
+    -bme-tint:       #f4e8ea;   /* halvány bordó háttér */
+    -bme-tint-2:     #e9d3d7;
+    -ink:            #1f1a1b;   /* szövegszín */
+    -ink-soft:       #5f5658;
+    -ink-faint:      #9a9093;
+    -line:           #e2dadb;   /* keret */
+    -line-strong:    #cfc3c5;
+    -paper:          #ffffff;
+    -paper-2:        #faf8f8;   /* ablakháttér */
+
+    -fx-font-family: "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif;
     -fx-font-size: 13px;
-    -fx-background-color: #f4f6f9;
-    -nim-accent: #1f5fa8;
-    -nim-accent-light: #dce9f8;
-    -nim-pebble: #6b7c93;
-    -nim-pebble-dark: #3d4a5c;
-    -nim-win: #2e7d32;
-    -nim-lose: #c62828;
+    -fx-text-fill: -ink;
+    -fx-background-color: -paper-2;
+
+    /* a Modena kék kiemelések cseréje */
+    -fx-accent: -bme;
+    -fx-focus-color: -bme;
+    -fx-faint-focus-color: #7b1e2e33;
+    -fx-selection-bar: -bme-tint;
+    -fx-selection-bar-text: -ink;
+    -fx-selection-bar-non-focused: -bme-tint;
 }
+
+.label { -fx-text-fill: -ink; }
+
+/* ---------------------------------------------------------------------
+   Tipográfia
+   --------------------------------------------------------------------- */
 
 .title {
     -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: -nim-accent;
+    -fx-text-fill: -bme;
 }
 
 .subtitle {
-    -fx-font-size: 14px;
-    -fx-text-fill: #4a5568;
+    -fx-font-size: 13px;
+    -fx-text-fill: -ink-soft;
 }
 
 .section {
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2d3748;
+    -fx-text-fill: -bme;
 }
+
+.hint {
+    -fx-text-fill: -ink-soft;
+    -fx-font-size: 12px;
+}
+
+.error {
+    -fx-text-fill: -bme;
+    -fx-font-size: 12px;
+}
+
+/* ---------------------------------------------------------------------
+   Kártya, fejléc, elválasztó
+   --------------------------------------------------------------------- */
 
 .card {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: #d9dee7;
-    -fx-border-radius: 10;
-    -fx-padding: 14;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+    -fx-background-color: -paper;
+    -fx-background-radius: 8;
+    -fx-border-color: -line;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-padding: 16;
 }
 
+.header {
+    -fx-padding: 0 0 10 0;
+}
+
+.header-rule {
+    -fx-background-color: -bme;
+    -fx-min-height: 3;
+    -fx-max-height: 3;
+    -fx-pref-height: 3;
+}
+
+.separator .line {
+    -fx-border-color: -line transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.separator:vertical .line {
+    -fx-border-color: transparent transparent transparent -line;
+    -fx-border-width: 0 0 0 1;
+}
+
+/* ---------------------------------------------------------------------
+   Gombok
+   --------------------------------------------------------------------- */
+
 .button {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
     -fx-background-radius: 6;
+    -fx-border-color: -line-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-text-fill: -ink;
     -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+    -fx-effect: none;
+}
+
+.button:hover {
+    -fx-background-color: -bme-tint;
+    -fx-border-color: -bme-mid;
+}
+
+.button:pressed,
+.button:armed {
+    -fx-background-color: -bme-tint-2;
+}
+
+.button:focused {
+    -fx-border-color: -bme;
+}
+
+.button:disabled {
+    -fx-opacity: 0.45;
 }
 
 .button.primary {
-    -fx-background-color: -nim-accent;
+    -fx-background-color: -bme;
+    -fx-border-color: -bme;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 14px;
-    -fx-padding: 8 22 8 22;
+    -fx-padding: 9 24 9 24;
 }
 
-.button.primary:hover {
-    -fx-background-color: derive(-nim-accent, 15%);
-}
+.button.primary:hover { -fx-background-color: -bme-mid; -fx-border-color: -bme-mid; }
+.button.primary:pressed,
+.button.primary:armed { -fx-background-color: -bme-dark; -fx-border-color: -bme-dark; }
 
 .button.take {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-min-width: 52;
-    -fx-background-color: -nim-accent-light;
-    -fx-border-color: -nim-accent;
+    -fx-min-width: 48;
+    -fx-background-color: -paper;
+    -fx-border-color: -bme;
+    -fx-text-fill: -bme;
+}
+
+.button.take:hover { -fx-background-color: -bme; -fx-text-fill: white; }
+.button.take:pressed,
+.button.take:armed { -fx-background-color: -bme-dark; -fx-border-color: -bme-dark; -fx-text-fill: white; }
+
+.button.ghost {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -bme;
+}
+
+.button.ghost:hover { -fx-background-color: -bme-tint; }
+
+/* ---------------------------------------------------------------------
+   Rádiógomb, jelölőnégyzet
+   --------------------------------------------------------------------- */
+
+.radio-button,
+.check-box {
+    -fx-text-fill: -ink;
+    -fx-cursor: hand;
+}
+
+.radio-button .radio,
+.check-box .box {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
+    -fx-border-color: -line-strong;
+    -fx-border-width: 1.5;
+    -fx-padding: 3;
+    -fx-effect: none;
+}
+
+.radio-button .radio {
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+}
+
+.check-box .box {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+.radio-button:hover .radio,
+.check-box:hover .box,
+.radio-button:focused .radio,
+.check-box:focused .box {
+    -fx-border-color: -bme;
+}
+
+.radio-button:selected .radio {
+    -fx-border-color: -bme;
+}
+
+.radio-button .radio .dot {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 3.5;
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: -bme;
+}
+
+.check-box:selected .box {
+    -fx-background-color: -bme;
+    -fx-border-color: -bme;
+}
+
+.check-box .mark {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* ---------------------------------------------------------------------
+   Szövegmező, Spinner
+   --------------------------------------------------------------------- */
+
+.text-field,
+.text-input {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: -line-strong;
+    -fx-border-width: 1;
     -fx-border-radius: 6;
-    -fx-text-fill: -nim-accent;
+    -fx-text-fill: -ink;
+    -fx-prompt-text-fill: -ink-faint;
+    -fx-highlight-fill: -bme-tint-2;
+    -fx-highlight-text-fill: -ink;
+    -fx-padding: 5 8 5 8;
+    -fx-effect: none;
 }
 
-.button.take:hover {
-    -fx-background-color: derive(-nim-accent-light, -8%);
+.text-field:focused,
+.text-input:focused {
+    -fx-border-color: -bme;
 }
 
-/* --- kupacok --- */
+.spinner {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+}
+
+.spinner .text-field {
+    -fx-background-radius: 6 0 0 6;
+    -fx-border-radius: 6 0 0 6;
+    -fx-border-width: 1 0 1 1;
+    -fx-alignment: center-right;
+}
+
+.spinner:focused .text-field,
+.spinner .text-field:focused {
+    -fx-border-color: -bme;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
+    -fx-border-color: -line-strong;
+    -fx-padding: 0 6 0 6;
+    -fx-cursor: hand;
+}
+
+.spinner .increment-arrow-button {
+    -fx-background-radius: 0 6 0 0;
+    -fx-border-radius: 0 6 0 0;
+    -fx-border-width: 1 1 0 0;
+}
+
+.spinner .decrement-arrow-button {
+    -fx-background-radius: 0 0 6 0;
+    -fx-border-radius: 0 0 6 0;
+    -fx-border-width: 1 1 1 0;
+}
+
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: -bme-tint;
+}
+
+.spinner .increment-arrow,
+.spinner .decrement-arrow {
+    -fx-background-color: -bme;
+    -fx-background-insets: 0;
+    -fx-padding: 2.5 4 2.5 4;
+}
+
+/* ---------------------------------------------------------------------
+   ComboBox és lenyíló lista
+   --------------------------------------------------------------------- */
+
+.combo-box-base {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: -line-strong;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-cursor: hand;
+    -fx-effect: none;
+}
+
+.combo-box-base:hover { -fx-border-color: -bme-mid; }
+.combo-box-base:focused,
+.combo-box-base:showing { -fx-border-color: -bme; }
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -ink;
+    -fx-padding: 5 8 5 8;
+}
+
+.combo-box-base .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 8 0 4;
+}
+
+.combo-box-base .arrow-button .arrow {
+    -fx-background-color: -bme;
+    -fx-background-insets: 0;
+    -fx-padding: 2.5 4 2.5 4;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
+    -fx-background-radius: 6;
+    -fx-border-color: -line-strong;
+    -fx-border-radius: 6;
+    -fx-padding: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-text-fill: -ink;
+    -fx-padding: 6 10 6 10;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover,
+.combo-box-popup .list-view .list-cell:filled:selected,
+.combo-box-popup .list-view .list-cell:filled:selected:hover {
+    -fx-background-color: -bme-tint;
+    -fx-text-fill: -bme-dark;
+}
+
+/* ---------------------------------------------------------------------
+   ListView (lépésnapló)
+   --------------------------------------------------------------------- */
+
+.list-view {
+    -fx-background-color: -paper;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8;
+    -fx-border-color: -line;
+    -fx-border-radius: 8;
+    -fx-padding: 4;
+}
+
+.list-view:focused {
+    -fx-border-color: -line;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -ink;
+    -fx-padding: 5 8 5 8;
+    -fx-font-size: 12px;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: -paper-2;
+}
+
+.list-view .list-cell:filled:selected,
+.list-view .list-cell:filled:selected:hover {
+    -fx-background-color: -bme-tint;
+    -fx-text-fill: -ink;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: -bme-tint;
+}
+
+.list-view .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+/* ---------------------------------------------------------------------
+   ScrollPane, ScrollBar, SplitPane
+   --------------------------------------------------------------------- */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane > .corner {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-bar:vertical { -fx-pref-width: 10; }
+.scroll-bar:horizontal { -fx-pref-height: 10; }
+
+.scroll-bar .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: -line-strong;
+    -fx-background-insets: 2;
+    -fx-background-radius: 999;
+}
+
+.scroll-bar .thumb:hover,
+.scroll-bar .thumb:pressed {
+    -fx-background-color: -bme-mid;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-background-color: transparent;
+    -fx-padding: 0 4 0 4;
+}
+
+.split-pane > .split-pane-divider:hover {
+    -fx-background-color: -bme-tint;
+}
+
+/* ---------------------------------------------------------------------
+   Dialógus (Alert)
+   --------------------------------------------------------------------- */
+
+.dialog-pane {
+    -fx-background-color: -paper;
+    -fx-padding: 0;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: -bme;
+    -fx-padding: 16 20 16 20;
+}
+
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane > .header-panel .graphic-container {
+    -fx-padding: 0;
+}
+
+.dialog-pane > .content.label {
+    -fx-text-fill: -ink;
+    -fx-font-size: 13px;
+    -fx-padding: 18 20 8 20;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-background-color: -paper;
+    -fx-padding: 10 16 14 16;
+}
+
+.dialog-pane .button {
+    -fx-min-width: 100;
+}
+
+.dialog-pane .button:default {
+    -fx-background-color: -bme;
+    -fx-border-color: -bme;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .button:default:hover { -fx-background-color: -bme-mid; }
+
+/* ---------------------------------------------------------------------
+   Tooltip
+   --------------------------------------------------------------------- */
+
+.tooltip {
+    -fx-background-color: -ink;
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-padding: 6 10 6 10;
+    -fx-font-size: 12px;
+    -fx-effect: none;
+}
+
+/* ---------------------------------------------------------------------
+   Kupacok és kavicsok
+   --------------------------------------------------------------------- */
 
 .heap {
-    -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-color: #cbd2dc;
-    -fx-border-width: 2;
-    -fx-border-radius: 10;
-    -fx-padding: 10;
+    -fx-background-color: -paper;
+    -fx-background-radius: 8;
+    -fx-border-color: -line;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+    -fx-padding: 10 10 12 10;
     -fx-alignment: top-center;
     -fx-spacing: 6;
     -fx-cursor: hand;
 }
 
 .heap:hover {
-    -fx-border-color: derive(-nim-accent, 40%);
+    -fx-border-color: -bme-mid;
 }
 
 .heap.selected {
-    -fx-border-color: -nim-accent;
-    -fx-background-color: -nim-accent-light;
+    -fx-border-color: -bme;
+    -fx-background-color: -bme-tint;
 }
 
 .heap.disabled {
-    -fx-opacity: 0.7;
+    -fx-opacity: 0.75;
     -fx-cursor: default;
+}
+
+.heap.disabled:hover {
+    -fx-border-color: -line;
 }
 
 .heap.empty {
     -fx-border-style: dashed;
+    -fx-opacity: 0.6;
 }
 
 .heap-title {
+    -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2d3748;
+    -fx-text-fill: -ink-soft;
 }
 
 .heap-count {
-    -fx-font-size: 20px;
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
-    -fx-text-fill: -nim-accent;
+    -fx-text-fill: -bme;
 }
 
 .pebble {
-    -fx-fill: linear-gradient(from 20% 20% to 80% 80%, derive(-nim-pebble, 35%), -nim-pebble-dark);
-    -fx-stroke: -nim-pebble-dark;
-    -fx-stroke-width: 1;
+    -fx-fill: -bme-tint-2;
+    -fx-stroke: -bme;
+    -fx-stroke-width: 1.5;
 }
 
 .pebble.marked {
-    -fx-fill: linear-gradient(from 20% 20% to 80% 80%, #ffb74d, #e65100);
-    -fx-stroke: #bf360c;
+    -fx-fill: -bme;
+    -fx-stroke: -bme-dark;
 }
 
 .pebble.removed {
     -fx-fill: transparent;
-    -fx-stroke: #cbd2dc;
+    -fx-stroke: -line-strong;
     -fx-stroke-dash-array: 2 2;
 }
 
-/* --- állapot --- */
+/* ---------------------------------------------------------------------
+   Állapotsor, oktató panel
+   --------------------------------------------------------------------- */
 
 .status {
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2d3748;
+    -fx-text-fill: -ink;
 }
 
-.status.human-turn { -fx-text-fill: -nim-accent; }
-.status.ai-turn { -fx-text-fill: #6b7c93; }
-.status.win { -fx-text-fill: -nim-win; }
-.status.lose { -fx-text-fill: -nim-lose; }
-
-/* --- oktató panel --- */
+.status.human-turn { -fx-text-fill: -bme; }
+.status.ai-turn    { -fx-text-fill: -ink-soft; }
+.status.win        { -fx-text-fill: -bme; }
+.status.lose       { -fx-text-fill: -ink-soft; }
 
 .tutor {
-    -fx-font-family: "Consolas", "Cascadia Mono", "DejaVu Sans Mono", monospace;
+    -fx-font-family: "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
     -fx-font-size: 13px;
+    -fx-text-fill: -ink;
 }
 
-.tutor-type-I { -fx-text-fill: -nim-win; -fx-font-weight: bold; }
-.tutor-type-II { -fx-text-fill: -nim-lose; -fx-font-weight: bold; }
-
-.log {
-    -fx-font-size: 12px;
+.tutor-header {
+    -fx-font-weight: bold;
+    -fx-text-fill: -ink-soft;
 }
 
-.hint {
-    -fx-text-fill: #6b7c93;
-    -fx-font-size: 12px;
-}
+.tutor-type-I  { -fx-text-fill: -bme;      -fx-font-weight: bold; }
+.tutor-type-II { -fx-text-fill: -ink-soft; -fx-font-weight: bold; }
+

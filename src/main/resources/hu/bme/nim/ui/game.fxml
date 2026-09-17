@@ -8,6 +8,8 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
@@ -22,8 +24,11 @@
     </padding>
 
     <top>
-        <VBox spacing="6">
+        <VBox spacing="8" styleClass="header">
             <HBox spacing="12" alignment="CENTER_LEFT">
+                <ImageView fitHeight="30" preserveRatio="true" smooth="true">
+                    <Image url="@images/bme_logo_colored.png"/>
+                </ImageView>
                 <Label styleClass="title" text="NIM"/>
                 <Label fx:id="rulesLabel" styleClass="subtitle" text=""/>
                 <Region HBox.hgrow="ALWAYS"/>
@@ -32,7 +37,7 @@
                 <Button text="Új beállítás" onAction="#onNewSetup"/>
             </HBox>
             <Label fx:id="statusLabel" styleClass="status" text=""/>
-            <Separator/>
+            <Region styleClass="header-rule"/>
         </VBox>
     </top>
 

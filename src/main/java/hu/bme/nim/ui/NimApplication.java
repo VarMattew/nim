@@ -15,9 +15,9 @@ import java.util.Objects;
  */
 public final class NimApplication extends Application {
 
-    private static final String TITLE = "NIM – Grundy-számos ellenfél";
-    private static final double WIDTH = 960;
-    private static final double HEIGHT = 640;
+    private static final String TITLE = "NIM – Grundy-számos ellenfél · BME";
+    private static final double WIDTH = 980;
+    private static final double HEIGHT = 660;
 
     private Stage stage;
 
@@ -29,8 +29,9 @@ public final class NimApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
         this.stage = primaryStage;
         stage.setTitle(TITLE);
-        stage.setMinWidth(760);
-        stage.setMinHeight(520);
+        stage.setMinWidth(780);
+        stage.setMinHeight(540);
+        Theme.apply(stage);
         showSetup(null);
         stage.show();
     }
@@ -62,8 +63,7 @@ public final class NimApplication extends Application {
         Scene scene = stage.getScene();
         if (scene == null) {
             scene = new Scene(root, WIDTH, HEIGHT);
-            URL css = Objects.requireNonNull(NimApplication.class.getResource("style.css"), "Hiányzó CSS");
-            scene.getStylesheets().add(css.toExternalForm());
+            Theme.apply(scene);
             stage.setScene(scene);
         } else {
             scene.setRoot(root);

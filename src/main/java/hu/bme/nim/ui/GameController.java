@@ -362,7 +362,11 @@ public final class GameController {
         try {
             app.showSetup(settings);
         } catch (IOException e) {
-            new Alert(Alert.AlertType.ERROR, "Nem sikerült betölteni a beállító képernyőt:\n" + e.getMessage()).showAndWait();
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Nem sikerült betölteni a beállító képernyőt:\n" + e.getMessage());
+            alert.setHeaderText("Hiba");
+            alert.setGraphic(null);
+            Theme.apply(alert);
+            alert.showAndWait();
         }
     }
 
@@ -484,7 +488,7 @@ public final class GameController {
         Label[] labels = {new Label(a), new Label(b), new Label(c), new Label(d)};
         for (int col = 0; col < labels.length; col++) {
             if (header) {
-                labels[col].setStyle("-fx-font-weight: bold; -fx-text-fill: #4a5568;");
+                labels[col].getStyleClass().add("tutor-header");
             }
             tutorGrid.add(labels[col], col, row);
         }
@@ -499,6 +503,8 @@ public final class GameController {
         Player winner = game.winner();
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Játék vége");
+        alert.setGraphic(null);
+        Theme.apply(alert);
         String typeInfo = "\nA kezdőállás típusa T(J) = " + calc.type(game.initialState()) + " volt"
                 + " (kezdett: " + name(game.initialState().currentPlayer()) + ").";
         if (settings.aiVsAi()) {

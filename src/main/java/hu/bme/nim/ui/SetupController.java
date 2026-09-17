@@ -287,6 +287,8 @@ public final class SetupController {
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Nem sikerült betölteni a játék képernyőt:\n" + e.getMessage());
             alert.setHeaderText("Hiba");
+            alert.setGraphic(null);
+            Theme.apply(alert);
             alert.showAndWait();
         }
     }

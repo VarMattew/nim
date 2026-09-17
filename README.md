@@ -66,6 +66,7 @@ program doubles as an interactive illustration of the Sprague–Grundy theory.
 | **Tutor mode** | per-heap size and Grundy number in fixed-width binary, the XOR, the position type $T(v)$, a plain-language explanation and a *Hint* button that marks a winning move |
 | **AI vs. AI showcase** | let two engines of chosen strengths play each other, with pause / resume / single-step controls |
 | **Quality of life** | stone-by-stone preview of a move on hover, ghost outlines of the stones just removed, move log, undo (including the AI's reply), rematch, live $T(J)$ read-out on the setup screen |
+| **BME look** | burgundy-and-white theme in the colours of the Budapest University of Technology and Economics; every JavaFX control is restyled in `style.css`, the BME logo sits in the header and the favicon is the window icon |
 | **Console demo** | `--console` flag prints a full self-play game with all Grundy values, for scripts and reports |
 
 ## The mathematics
@@ -362,11 +363,12 @@ nim/
     │   │   ├── ConsoleDemo.java
     │   │   ├── model/    Rules, Move, Player, GameState, Game, HeapGenerator
     │   │   ├── engine/   GrundyCalculator, PositionType, NimAnalyzer, AiPlayer, Difficulty
-    │   │   └── ui/       NimApplication, SetupController, GameController, HeapView, GameSettings
+    │   │   └── ui/       NimApplication, SetupController, GameController, HeapView, GameSettings, Theme
     │   └── resources/hu/bme/nim/ui/
     │       ├── setup.fxml
     │       ├── game.fxml
-    │       └── style.css
+    │       ├── style.css                # BME burgundy theme, all controls restyled
+    │       └── images/                  # bme_logo_colored.png, favicon.jfif
     └── test/java/hu/bme/nim/
         ├── engine/   GrundyCalculatorTest, NimAnalyzerAndAiTest
         └── model/    GameStateTest

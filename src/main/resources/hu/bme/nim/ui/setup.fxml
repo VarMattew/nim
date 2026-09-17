@@ -13,6 +13,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -24,15 +26,18 @@
     </padding>
 
     <top>
-        <VBox spacing="4">
-            <Label styleClass="title" text="NIM – játék Grundy-számos ellenféllel"/>
-            <Label styleClass="subtitle"
-                   text="Állítsd be a kupacokat és a szabályokat, majd indítsd a játékot. Aki az utolsó kavicsot elveszi, nyer."/>
-            <Separator>
-                <padding>
-                    <Insets top="8" bottom="4"/>
-                </padding>
-            </Separator>
+        <VBox spacing="10" styleClass="header">
+            <HBox spacing="16" alignment="CENTER_LEFT">
+                <ImageView fitHeight="46" preserveRatio="true" smooth="true">
+                    <Image url="@images/bme_logo_colored.png"/>
+                </ImageView>
+                <VBox spacing="2">
+                    <Label styleClass="title" text="NIM – játék Grundy-számos ellenféllel"/>
+                    <Label styleClass="subtitle"
+                           text="Állítsd be a kupacokat és a szabályokat, majd indítsd a játékot. Aki az utolsó kavicsot elveszi, nyer."/>
+                </VBox>
+            </HBox>
+            <Region styleClass="header-rule"/>
         </VBox>
     </top>
 
@@ -65,7 +70,7 @@
                         <Button fx:id="randomButton" text="Véletlen méretek" onAction="#onRandomSizes"/>
                         <Button text="Minden véletlen" onAction="#onRandomAll"/>
                     </HBox>
-                    <Label fx:id="errorLabel" styleClass="hint" style="-fx-text-fill: #c62828;" text=""/>
+                    <Label fx:id="errorLabel" styleClass="error" text=""/>
                 </VBox>
 
                 <!-- Szabályok és ellenfél -->
